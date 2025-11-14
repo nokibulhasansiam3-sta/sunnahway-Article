@@ -19,17 +19,5 @@
     "contentBn": "আকীদা হলো ইসলামের মূলভিত্তি। একজন মুসলিমের বিশ্বাস, দৃষ্টিভঙ্গি, চিন্তা-চেতনা—সবকিছুর কেন্দ্রবিন্দু হলো সঠিক আকীদা।\nআকীদা সঠিক না হলে ইবাদত, আমল কিংবা দ্বীনের অন্য শাখাগুলো পূর্ণতা পায় না।\n\nঈমানের ছয়টি স্তম্ভ—আল্লাহ্‌তে ঈমান, ফেরেশতাগণে ঈমান, গ্রন্থসমূহে ঈমান, রাসূলগণে ঈমান, আখেরাতে ঈমান, তাকদীরে ঈমান—\nএগুলোই সঠিক আকীদার ভিত্তি স্থাপন করে। প্রতিটি স্তম্ভ গভীরভাবে হৃদয়ঙ্গম করা, তার প্রভাব জীবনে আনা এবং সন্দেহ-সংশয়ের ঊর্ধ্বে থাকা ফরজ।\n\nসঠিক আকীদা অর্জনের জন্য কুরআন ও সহিহ সুন্নাহর বোধগম্যতা অপরিহার্য। সাহাবায়ে কিরামের পদ্ধতি ও উম্মাহর সালফ-সালিহীনের ব্যাখ্যা অনুসরণ করা নিরাপদ পথ।\n\nএই ডেমো আর্টিকেলটি শুধুমাত্র পরীক্ষামূলক কনটেন্ট হিসেবে যোগ করা হয়েছে—পরবর্তীতে এখানে API থেকে বড় ও বিস্তারিত লেখা আসবে ইনশাআল্লাহ।",
     "contentEn": "Aqidah (creed) is the core of Islam. A Muslim’s worldview, worship, and practice all stand on correct belief.\nWithout sound creed, deeds cannot attain their true value.\n\nThe six pillars of faith—belief in Allah, His angels, His books, His messengers, the Last Day, and Divine Decree—\nform the foundation of Aqidah. Each pillar must be internalized, lived, and held without doubt.\n\nUnderstanding the Qur’an and authentic Sunnah, along with the explanations of the Companions and early scholars,\nis essential to preserve orthodoxy.\n\nThis is a long demo article for testing. In production, content will be loaded from the API.",
     "contentAr": "العقيدة هي أساس الإسلام. تقوم عبادة المسلم وسلوكه ونظرته للحياة على الاعتقاد الصحيح.\nبدون عقيدة سليمة لا يبلغ العمل كماله.\n\nأركان الإيمان الستة — الإيمان بالله وملائكته وكتبه ورسله واليوم الآخر والقدر —\nهي التي تؤسس لبناء العقيدة. يجب ترسيخها في القلب والعمل بمقتضاها دون شك.\n\nفهم القرآن والسنة الصحيحة واتباع منهج الصحابة والسلف الصالح يحفظ الدين من الانحراف.\n\nهذا مقال تجريبي طويل للاختبار، وسيأتي المحتوى لاحقًا من واجهة برمجة التطبيقات."
-  },
-  {
-    "id": "fff",
-    "categoryId": "aqeedah",
-    "titleBn": "bangla arile",
-    "titleEn": "fff",
-    "titleAr": "ffff",
-    "contentBn": "tet",
-    "contentEn": "tst",
-    "contentAr": "tsrr",
-    "createdAt": "2025-11-14T13:57:55.026Z",
-    "updatedAt": "2025-11-14T13:57:55.026Z"
   }
 ]
