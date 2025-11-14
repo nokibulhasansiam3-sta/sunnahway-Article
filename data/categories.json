@@ -16,5 +16,11 @@
     "titleBn": "সীরাহ",
     "titleEn": "Seerah",
     "titleAr": "السيرة"
+  },
+  {
+    "id": "rf",
+    "titleBn": "ar",
+    "titleEn": "rf",
+    "titleAr": "rr"
   }
 ]
