@@ -1,8 +1,11 @@
 <template>
   <div class="card">
-    <div class="card-header">Articles</div>
+    <div class="card-header flex items-center justify-between">
+      <div>Articles</div>
+      <div class="text-xs text-slate-500">Create and manage articles</div>
+    </div>
     <div class="card-body space-y-5">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
         <div>
           <label class="label">Filter by Category</label>
           <select class="input" v-model="selectedCategory">
@@ -10,26 +13,41 @@
             <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.id }} — {{ c.titleBn || c.titleEn }}</option>
           </select>
         </div>
-        <div class="md:col-span-2 flex items-end justify-end gap-3">
-          <button class="btn btn-outline" @click="newArticle">New Article</button>
+        <div class="md:col-span-2 flex items-end justify-between gap-3">
+          <div class="flex-1">
+            <label class="label">Search</label>
+            <input class="input" v-model="query" placeholder="Search by title, id or category" />
+          </div>
+          <button class="btn btn-primary h-10 mt-[22px]" @click="newArticle">New Article</button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div class="md:col-span-1">
           <div class="card">
-            <div class="card-header">List</div>
-            <div class="card-body p-0 divide-y">
-              <button
-                v-for="a in list"
-                :key="a.id"
-                class="w-full text-left px-4 py-3 hover:bg-slate-50"
-                :class="{ 'bg-slate-100': a.id === current?.id }"
-                @click="openArticle(a.id)"
-              >
-                <div class="font-medium">{{ a.titleBn || a.titleEn || a.id }}</div>
-                <div class="text-xs text-slate-500">{{ a.id }} • {{ a.categoryId || 'no-category' }}</div>
-              </button>
+            <div class="card-header flex items-center justify-between">
+              <div>List</div>
+              <div class="text-xs text-slate-500">{{ filteredList.length }} items</div>
+            </div>
+            <div class="card-body p-0">
+              <div v-if="loadingList" class="p-4 text-slate-500">Loading articles…</div>
+              <div v-else-if="filteredList.length === 0" class="p-4 text-slate-500">No articles found.</div>
+              <div v-else class="p-3 space-y-2">
+                <button
+                  v-for="a in filteredList"
+                  :key="a.id"
+                  class="w-full text-left px-4 py-3 rounded-lg border transition shadow-sm hover:shadow bg-white"
+                  :class="{ 'border-indigo-300 ring-2 ring-indigo-200': a.id === current?.id }"
+                  @click="openArticle(a.id)"
+                >
+                  <div class="font-medium truncate">{{ a.titleBn || a.titleEn || a.id }}</div>
+                  <div class="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                    <span class="truncate">{{ a.id }}</span>
+                    <span>•</span>
+                    <span class="badge">{{ a.categoryId || 'no-category' }}</span>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -57,8 +75,10 @@
               </div>
               <div>
                 <label class="label">Category</label>
-                <input class="input" v-model="current.categoryId" placeholder="category id" />
-                <p class="helper">Type an existing category id</p>
+                <select class="input" v-model="current.categoryId">
+                  <option :value="''">No category</option>
+                  <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.id }} — {{ c.titleBn || c.titleEn }}</option>
+                </select>
               </div>
               <div class="md:col-span-2">
                 <label class="label">Content (BN)</label>
@@ -72,6 +92,9 @@
                 <label class="label">Content (AR)</label>
                 <textarea class="textarea" dir="rtl" v-model="current.contentAr" />
               </div>
+              <div class="md:col-span-2 text-xs text-slate-500">
+                <span v-if="!current.titleBn && !current.titleEn" class="text-rose-600">Provide at least BN or EN title.</span>
+              </div>
             </div>
           </div>
           <div v-else class="text-slate-500">Select an article from the list or click New Article.</div>
@@ -82,16 +105,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { createArticle, deleteArticle, getArticle, listArticles, listCategories, updateArticle, type Article, type Category } from '../api'
+import { useToast } from '../useToast'
 
 const categories = ref<Category[]>([])
 const selectedCategory = ref('')
 const list = ref<Article[]>([])
 const current = ref<Partial<Article> | null>(null)
+const loadingList = ref(false)
+const toast = useToast()
 
 async function refreshList() {
-  list.value = await listArticles(selectedCategory.value || undefined)
+  loadingList.value = true
+  try {
+    list.value = await listArticles(selectedCategory.value || undefined)
+  } catch (e: any) {
+    toast.show('API unreachable. Start server on http://localhost:8081', 'error')
+  } finally {
+    loadingList.value = false
+  }
 }
 
 onMounted(async () => {
@@ -106,27 +139,46 @@ function newArticle() {
 }
 
 async function openArticle(id: string) {
-  current.value = await getArticle(id)
+  try {
+    current.value = await getArticle(id)
+  } catch (e: any) {
+    toast.show(e?.message || 'Failed to load article', 'error')
+  }
 }
 
 async function saveCurrent() {
   if (!current.value) return
-  if (!current.value.id) {
-    const created = await createArticle(current.value)
-    await refreshList()
-    current.value = created
-  } else {
-    const updated = await updateArticle(current.value.id, current.value)
-    await refreshList()
-    current.value = updated
+  if (!current.value.titleBn && !current.value.titleEn) {
+    toast.show('Provide at least BN or EN title', 'error')
+    return
+  }
+  try {
+    if (!current.value.id) {
+      const created = await createArticle(current.value)
+      await refreshList()
+      current.value = created
+      toast.show('Article created', 'success')
+    } else {
+      const updated = await updateArticle(current.value.id, current.value)
+      await refreshList()
+      current.value = updated
+      toast.show('Article saved', 'success')
+    }
+  } catch (e: any) {
+    toast.show(e?.message || 'Save failed', 'error')
   }
 }
 
 async function removeCurrent() {
   if (!current.value || !current.value.id) return
   if (!confirm('Delete this article?')) return
-  await deleteArticle(current.value.id)
-  await refreshList()
-  current.value = null
+  try {
+    await deleteArticle(current.value.id)
+    await refreshList()
+    current.value = null
+    toast.show('Article deleted', 'success')
+  } catch (e: any) {
+    toast.show(e?.message || 'Delete failed', 'error')
+  }
 }
 </script>

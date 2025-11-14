@@ -1,4 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8081'
+// Dynamic API base: use current host so preview on 192.168.x.x can reach API on same machine
+const API_BASE = (() => {
+  try {
+    const host = window.location.hostname || 'localhost'
+    return `http://${host}:8081`
+  } catch {
+    return 'http://localhost:8081'
+  }
+})()
 
 export type Category = { id: string; titleBn: string; titleEn: string; titleAr: string }
 export type Article = {

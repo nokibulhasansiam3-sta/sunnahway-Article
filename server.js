@@ -11,6 +11,24 @@ const PORT = process.env.PORT || 8081;
 const DATA_DIR = path.join(__dirname, 'data');
 const CATEGORIES_FILE = path.join(DATA_DIR, 'categories.json');
 const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
+// Enable auto git push by default; can be disabled with AUTO_GIT_PUSH=false
+const AUTO_GIT_PUSH = String(process.env.AUTO_GIT_PUSH ?? 'true').toLowerCase() === 'true';
+
+// Git helper (optional): commit and push after write operations
+const { exec } = require('child_process');
+function gitCommitPush(message = 'chore: content update') {
+  if (!AUTO_GIT_PUSH) return; // can be toggled off via env
+  exec(`git add . && git commit -m "${message}" && git push origin main --no-verify`,
+    { cwd: __dirname },
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error('[git] push failed:', err?.message || err);
+        return;
+      }
+      if (stdout) console.log('[git]', stdout.trim());
+      if (stderr) console.log('[git:warn]', stderr.trim());
+    });
+}
 
 // Helpers: load/save JSON with simple locking via in-process queue (best-effort)
 async function loadJson(file, fallback) {
@@ -38,6 +56,25 @@ function sanitizeId(s) {
     .slice(0, 80);
 }
 
+// Root/status
+app.get('/', (req, res) => {
+  res.type('html').send(`
+    <html>
+      <head><meta charset="utf-8"><title>Sunnahway Articles API</title></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 24px;">
+        <h2>Sunnahway Articles API</h2>
+        <p>Server is running.</p>
+        <ul>
+          <li><a href="/articles/categories">GET /articles/categories</a></li>
+          <li><a href="/articles">GET /articles</a></li>
+        </ul>
+      </body>
+    </html>
+  `);
+});
+
+app.get('/health', (req, res) => res.json({ ok: true }));
+
 // Categories
 app.get('/articles/categories', async (req, res) => {
   const categories = await loadJson(CATEGORIES_FILE, []);
@@ -58,6 +95,7 @@ app.post('/articles/categories', async (req, res) => {
   const cat = { id: newId, titleBn: titleBn || '', titleEn: titleEn || '', titleAr: titleAr || '' };
   categories.push(cat);
   await saveJson(CATEGORIES_FILE, categories);
+  gitCommitPush(`feat(category): add ${cat.id}`);
   res.status(201).json(cat);
 });
 
@@ -71,6 +109,7 @@ app.delete('/articles/categories/:id', async (req, res) => {
   const articles = await loadJson(ARTICLES_FILE, []);
   const updated = articles.map(a => (a.categoryId === id ? { ...a, categoryId: null } : a));
   await saveJson(ARTICLES_FILE, updated);
+  gitCommitPush(`feat(category): delete ${id}`);
   res.json({ ok: true });
 });
 
@@ -121,6 +160,7 @@ app.post('/articles', async (req, res) => {
   };
   items.push(article);
   await saveJson(ARTICLES_FILE, items);
+  gitCommitPush(`feat(article): create ${article.id}`);
   res.status(201).json(article);
 });
 
@@ -138,6 +178,7 @@ app.put('/articles/:id', async (req, res) => {
     updatedAt: now,
   };
   await saveJson(ARTICLES_FILE, items);
+  gitCommitPush(`feat(article): update ${id}`);
   res.json(items[idx]);
 });
 
@@ -148,9 +189,23 @@ app.delete('/articles/:id', async (req, res) => {
   const next = items.filter(a => a.id !== id);
   if (next.length === items.length) return res.status(404).json({ message: 'Not found' });
   await saveJson(ARTICLES_FILE, next);
+  gitCommitPush(`feat(article): delete ${id}`);
   res.json({ ok: true });
 });
 
-app.listen(PORT, () => {
+// Manual git push endpoint (always allowed)
+app.post('/git/push', (req, res) => {
+  const msg = (req.body && req.body.message) ? String(req.body.message) : 'chore: manual push'
+  // Temporarily force a one-off push even if AUTO_GIT_PUSH is disabled
+  exec(`git add . && git commit -m "${msg}" && git push origin main --no-verify`,
+    { cwd: __dirname },
+    (err, stdout, stderr) => {
+      if (err) return res.status(500).json({ ok: false, message: err?.message || String(err) })
+      res.json({ ok: true, stdout, stderr })
+    }
+  )
+});
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Articles API running on http://localhost:${PORT}`);
 });

@@ -10,8 +10,18 @@
     </header>
 
     <main class="container py-6 space-y-6">
+      <!-- Categories quick manage -->
       <CategoryManager />
-      <ArticleManager />
+
+      <!-- File-manager style workspace -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 min-h-[70vh]">
+          <SidebarExplorer @select="onSelect" @newIn="onNewIn" @newRoot="onNew" />
+        </div>
+        <div class="lg:col-span-2 min-h-[70vh]">
+          <EditorPanel :selected-id="selectedId" :draft-category-id="draftCategoryId" @saved="onSaved" @deleted="onDeleted" />
+        </div>
+      </div>
     </main>
 
     <!-- Toasts -->
@@ -27,13 +37,38 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import CategoryManager from './components/CategoryManager.vue'
-import ArticleManager from './components/ArticleManager.vue'
+import SidebarExplorer from './components/SidebarExplorer.vue'
+import EditorPanel from './components/EditorPanel.vue'
 import { useToast } from './useToast'
 const toast = useToast()
+
+const selectedId = ref<string | null>(null)
+const draftCategoryId = ref<string | null>(null)
+
+function onSelect(id: string) {
+  selectedId.value = id
+  draftCategoryId.value = null
+}
+function onNewIn(categoryId: string) {
+  selectedId.value = null
+  draftCategoryId.value = categoryId
+}
+function onNew() {
+  selectedId.value = null
+  draftCategoryId.value = ''
+}
+function onSaved(id: string) {
+  selectedId.value = id
+}
+function onDeleted() {
+  selectedId.value = null
+}
 </script>
 
 <style>
