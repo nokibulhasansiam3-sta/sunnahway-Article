@@ -1,26 +1,8 @@
 [
   {
-    "id": "aqeedah",
-    "titleBn": "আকীদা",
-    "titleEn": "Aqidah",
-    "titleAr": "العقيدة"
-  },
-  {
-    "id": "fiqh",
-    "titleBn": "ফিকহ",
-    "titleEn": "Fiqh",
-    "titleAr": "الفقه"
-  },
-  {
-    "id": "seerah",
-    "titleBn": "সীরাহ",
-    "titleEn": "Seerah",
-    "titleAr": "السيرة"
-  },
-  {
-    "id": "akhlaq",
-    "titleBn": "আখলাক ও আদব",
-    "titleEn": "Akhlaq & Adab",
-    "titleAr": "الأخلاق والآداب"
+    "id": "bengali-islam",
+    "titleBn": "বাংলায় ইসলাম আগমন",
+    "titleEn": "Islam in Bengal",
+    "titleAr": "الإسلام في بنغلاديش"
   }
 ]
