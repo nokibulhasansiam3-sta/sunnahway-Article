@@ -12,27 +12,7 @@
   }
 ]
 
-{
-  "id": "history-article-01",
-  "title": {
-    "bn": "ইতিহাসের ধারাবাহিক বিকাশ",
-    "en": "The Sequential Development of History",
-    "ar": "التطور المتسلسل للتاريخ"
-  },
-  "article": {
-    "introduction": {
-      "bn": "ইতিহাস মানবজাতির অতীত অভিজ্ঞতার সংকলন। এটি মানুষের সামাজিক, রাজনৈতিক, অর্থনৈতিক ও সাংস্কৃতিক পরিবর্তনের ধারাবাহিক চিত্র তুলে ধরে। ইতিহাস জানার মাধ্যমে বর্তমানকে বোঝা এবং ভবিষ্যতের সিদ্ধান্ত গ্রহণ আরও সহজ হয়।",
-      "en": "History is the compilation of human past experiences. It presents the sequence of social, political, economic, and cultural changes. Understanding history helps us interpret the present and make better decisions for the future."
-    },
-    "sections": [
-      {
-        "titleBn": "প্রাচীন যুগ",
-        "titleEn": "Ancient Era",
-        "titleAr": "العصر القديم",
-        "content": {
-          "bn": "মানব সভ্যতার শুরু প্রাচীন যুগে। এই সময়ে মানুষ শিকার ও সংগ্রহ নির্ভর জীবন থেকে কৃষিভিত্তিক সমাজে পরিবর্তিত হতে শুরু করে। মিশর, মেসোপটেমিয়া, সিন্ধু ও চীন—এগুলো ছিল প্রাচীন সভ্যতার প্রধান কেন্দ্র।",
-          "en": "The roots of human civilization lie in the ancient era. Humans shifted from a hunter-gatherer lifestyle to an agricultural society. Egypt, Mesopotamia, the Indus Valley, and China were major centers of ancient civilization."
-        }
+
       },
       {
         "titleBn": "মধ্যযুগ",
