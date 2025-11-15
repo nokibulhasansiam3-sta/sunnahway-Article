@@ -1,10 +1,12 @@
-{
-  "id": "world-history-1",
-  "categoryId": "history-topic",
-  "titleBn": "প্রাচীন যুগ: মানব ইতিহাসের সূচনা",
-  "titleEn": "Ancient Era: The Beginning of Human History",
-  "titleAr": "العصر القديم: بداية التاريخ البشري",
-  "contentBn": "মানব সভ্যতার শুরু: প্রাচীন যুগে মানুষ ধীরে ধীরে শিকার ও সংগ্রহ নির্ভর জীবন থেকে কৃষিনির্ভর সমাজে রূপান্তরিত হয়। নদী-কেন্দ্রিক সভ্যতাগুলো—মিশর, মেসোপটেমিয়া, সিন্ধু ও চীনে—মানব সমাজ প্রথমবারের মতো রাষ্ট্র, আইন ও নগরায়নের ধারণা গড়ে তোলে। প্রভাব: এই যুগে কৃষি প্রযুক্তি, লিপির উদ্ভব, বাণিজ্য পথ এবং ধর্মীয় আচার-অনুষ্ঠানের বিকাশ ঘটে, যা ভবিষ্যতের সভ্যতার ভিত্তি স্থাপন করে।",
-  "contentEn": "# Ancient Era: The Beginning of Human History\n\n## Origins\nHuman civilization began in the ancient era when societies transitioned from hunter-gatherer lifestyles to settled agricultural systems. Major river civilizations like Egypt, Mesopotamia, the Indus Valley, and China formed the earliest foundations of organized society.\n\n## Key Developments\n- Emergence of agriculture\n- Formation of states and legal systems\n- Invention of writing systems\n- Growth of trade routes\n\n## Notable Civilizations\n- Ancient Egypt\n- Mesopotamia\n- Indus Valley Civilization\n- Ancient China",
-  "contentAr": "# العصر القديم: بداية التاريخ البشري\n\n## النشأة\nبدأت الحضارة البشرية في العصر القديم عندما انتقل الإنسان من حياة الصيد والجمع إلى المجتمعات الزراعية المستقرة. ظهرت أولى الحضارات الكبرى حول الأنهار مثل مصر القديمة وبلاد الرافدين ووادي السند والصين.\n\n## أبرز التطورات\n- نشوء الزراعة\n- ظهور الدول والأنظمة القانونية\n- اختراع الكتابة\n- تطور طرق التجارة\n\n## أهم الحضارات\n- مصر القديمة\n- بلاد الرافدين\n- حضارة وادي السند\n- الصين القديمة"
-}
+[
+  {
+    "id": "world-history-1",
+    "categoryId": "history-topic",
+    "titleBn": "প্রাচীন যুগ: মানব ইতিহাসের সূচনা",
+    "titleEn": "Ancient Era: The Beginning of Human History",
+    "titleAr": "العصر القديم: بداية التاريخ البشري",
+    "contentBn": "মানব সভ্যতার শুরু: প্রাচীন যুগে মানুষ ধীরে ধীরে শিকার ও সংগ্রহ নির্ভর জীবন থেকে কৃষিনির্ভর সমাজে রূপান্তরিত হয়। নদী-কেন্দ্রিক সভ্যতাগুলো—মিশর, মেসোপটেমিয়া, সিন্ধু ও চীনে—মানব সমাজ প্রথমবারের মতো রাষ্ট্র, আইন ও নগরায়নের ধারণা গড়ে তোলে। প্রভাব: এই যুগে কৃষি প্রযুক্তি, লিপির উদ্ভব, বাণিজ্য পথ এবং ধর্মীয় আচার-অনুষ্ঠানের বিকাশ ঘটে, যা ভবিষ্যতের সভ্যতার ভিত্তি স্থাপন করে।",
+    "contentEn": "# Ancient Era: The Beginning of Human History\n\n## Origins\nHuman civilization began in the ancient era when societies transitioned from hunter-gatherer lifestyles to settled agricultural systems. Major river civilizations such as Egypt, Mesopotamia, the Indus Valley, and China laid the foundations of organized society.\n\n## Key Developments\n- Emergence of agriculture\n- Formation of states and legal systems\n- Invention of writing\n- Growth of trade routes\n\n## Major Civilizations\n- Ancient Egypt\n- Mesopotamia\n- Indus Valley Civilization\n- Ancient China",
+    "contentAr": "# العصر القديم: بداية التاريخ البشري\n\n## النشأة\nبدأت الحضارة البشرية في العصر القديم عندما انتقل الإنسان من حياة الصيد والجمع إلى المجتمعات الزراعية المستقرة. ظهرت أولى الحضارات الكبرى حول الأنهار مثل مصر القديمة وبلاد الرافدين ووادي السند والصين.\n\n## أهم التطورات\n- نشوء الزراعة\n- ظهور الدول والأنظمة القانونية\n- اختراع الكتابة\n- تطور طرق التجارة\n\n## الحضارات الكبرى\n- مصر القديمة\n- بلاد الرافدين\n- حضارة وادي السند\n- الصين القديمة"
+  }
+]
