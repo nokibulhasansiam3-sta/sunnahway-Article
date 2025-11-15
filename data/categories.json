@@ -1,16 +1,14 @@
-{
- "categories": [
-    {
-      "id": "bengali-islam",
-      "titleBn": "বাংলায় ইসলাম আগমন",
-      "titleEn": "Islam in Bengal",
-      "titleAr": "الإسلام في بنغلاديش"
-    },
-    {
-      "id": "husband-wife",
-      "titleBn": "স্বামী-স্ত্রীর মধুর সম্পর্ক",
-      "titleEn": "Husband-wife sweet relationship",
-      "titleAr": "العلاقة الحلوة بين الزوج والزوجة"
-    }
-  ]
-}
+[
+  {
+    "id": "bengali-islam",
+    "titleBn": "বাংলায় ইসলাম আগমন",
+    "titleEn": "Islam in Bengal",
+    "titleAr": "الإسلام في بنغلاديش"
+  },
+  {
+    "id": "husband-wife",
+    "titleBn": "স্বামী-স্ত্রীর মধুর সম্পর্ক",
+    "titleEn": "Husband-wife sweet relationship",
+    "titleAr": "العلاقة الحلوة بين الزوج والزوجة"
+  }
+]
