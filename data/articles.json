@@ -1,15 +1,10 @@
-[
-  {
-    "id": "bengali-islam-1",
-    "categoryId": "bengali-islam",
-    "titleBn": "৭ম-৮ম শতক: বাণিজ্যের সূচনা পর্ব",
-    "titleEn": "Arrival of Islam in Bangladesh",
-    "titleAr": "وصول الإسلام إلى بنغلاديش",
-    "contentBn": "ইসলামের প্রথম পদচিহ্ন: এই শতকগুলোতে বাংলায় ইসলামের আগমন শুধুমাত্র আরব বণিকদের মাধ্যমে। তারা তাদের ছোটো জাহাজে করে বাংলার উপকূলীয় বন্দর, বিশেষ করে চট্টগ্রাম (যাকে তারা 'সমুন্দরগঞ্জ' বলত) এবং সাতগাঁও (সোনারগাঁও)-এ আসত। প্রভাব: তাদের প্রভাব ছিল সীমিত ও স্থানীয়। তারা মূলত বন্দর এলাকায় বসতি স্থাপন করত এবং স্থানীয়দের সাথে সুসম্পর্ক গড়ে তুলত। তাদের সৎ ব্যবসায়িক আচরণ এবং উচ্চ নৈতিক চরিত্র স্থানীয় জনগণের মাঝে ইসলামের প্রতি একটি ইতিবাচক দৃষ্টিভঙ্গি তৈরি করে। এই সময়ে ব্যাপক ধর্মান্তকরণের কোনো নজির নেই।",
-    "contentEn": "# Arrival of Islam in Bangladesh\n\n## Early Phase\nIslam first came to Bangladesh through Arab traders and Sufi saints. The Sultanate period (1204-1576 CE) saw significant spread of Islam in the region.\n\n## Prominent Saints\n- Shah Jalal (Rh.)\n- Shah Paran (Rh.)\n- Khan Jahan Ali (Rh.)\n\n## Historical Sites\n- Shahjalal Dargah, Sylhet\n- Sixty Dome Mosque, Bagerhat\n- Sonargaon, Narayanganj",
-    "contentAr": "# وصول الإسلام إلى بنغلاديش\n\n## المرحلة المبكرة\nدخل الإسلام إلى بنغلاديش عن طريق التجار العرب والدعاة الصوفية. شهدت فترة السلطنة (1204-1576 م) انتشارًا كبيرًا للإسلام في المنطقة.\n\n## أبرز الدعاة\n- شاه جلال (رحمه الله)\n- شاه باران (رحمه الله)\n- خان جهان علي (رحمه الله)\n\n## المواقع التاريخية\n- ضريح شاه جلال، سيلهيت\n- مسجد الستين قبة، باغرهات\n- سونارغاون، نارايانغانج",
-   
-  }
-]
-
-
+{
+  "id": "world-history-1",
+  "categoryId": "history-topic",
+  "titleBn": "প্রাচীন যুগ: মানব ইতিহাসের সূচনা",
+  "titleEn": "Ancient Era: The Beginning of Human History",
+  "titleAr": "العصر القديم: بداية التاريخ البشري",
+  "contentBn": "মানব সভ্যতার শুরু: প্রাচীন যুগে মানুষ ধীরে ধীরে শিকার ও সংগ্রহ নির্ভর জীবন থেকে কৃষিনির্ভর সমাজে রূপান্তরিত হয়। নদী-কেন্দ্রিক সভ্যতাগুলো—মিশর, মেসোপটেমিয়া, সিন্ধু ও চীনে—মানব সমাজ প্রথমবারের মতো রাষ্ট্র, আইন ও নগরায়নের ধারণা গড়ে তোলে। প্রভাব: এই যুগে কৃষি প্রযুক্তি, লিপির উদ্ভব, বাণিজ্য পথ এবং ধর্মীয় আচার-অনুষ্ঠানের বিকাশ ঘটে, যা ভবিষ্যতের সভ্যতার ভিত্তি স্থাপন করে।",
+  "contentEn": "# Ancient Era: The Beginning of Human History\n\n## Origins\nHuman civilization began in the ancient era when societies transitioned from hunter-gatherer lifestyles to settled agricultural systems. Major river civilizations like Egypt, Mesopotamia, the Indus Valley, and China formed the earliest foundations of organized society.\n\n## Key Developments\n- Emergence of agriculture\n- Formation of states and legal systems\n- Invention of writing systems\n- Growth of trade routes\n\n## Notable Civilizations\n- Ancient Egypt\n- Mesopotamia\n- Indus Valley Civilization\n- Ancient China",
+  "contentAr": "# العصر القديم: بداية التاريخ البشري\n\n## النشأة\nبدأت الحضارة البشرية في العصر القديم عندما انتقل الإنسان من حياة الصيد والجمع إلى المجتمعات الزراعية المستقرة. ظهرت أولى الحضارات الكبرى حول الأنهار مثل مصر القديمة وبلاد الرافدين ووادي السند والصين.\n\n## أبرز التطورات\n- نشوء الزراعة\n- ظهور الدول والأنظمة القانونية\n- اختراع الكتابة\n- تطور طرق التجارة\n\n## أهم الحضارات\n- مصر القديمة\n- بلاد الرافدين\n- حضارة وادي السند\n- الصين القديمة"
+}
