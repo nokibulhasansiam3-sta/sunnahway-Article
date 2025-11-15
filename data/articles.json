@@ -11,3 +11,60 @@
     "updatedAt": "2025-11-14T20:18:00.000Z"
   }
 ]
+
+{
+  "id": "history-article-01",
+  "title": {
+    "bn": "ইতিহাসের ধারাবাহিক বিকাশ",
+    "en": "The Sequential Development of History",
+    "ar": "التطور المتسلسل للتاريخ"
+  },
+  "article": {
+    "introduction": {
+      "bn": "ইতিহাস মানবজাতির অতীত অভিজ্ঞতার সংকলন। এটি মানুষের সামাজিক, রাজনৈতিক, অর্থনৈতিক ও সাংস্কৃতিক পরিবর্তনের ধারাবাহিক চিত্র তুলে ধরে। ইতিহাস জানার মাধ্যমে বর্তমানকে বোঝা এবং ভবিষ্যতের সিদ্ধান্ত গ্রহণ আরও সহজ হয়।",
+      "en": "History is the compilation of human past experiences. It presents the sequence of social, political, economic, and cultural changes. Understanding history helps us interpret the present and make better decisions for the future."
+    },
+    "sections": [
+      {
+        "titleBn": "প্রাচীন যুগ",
+        "titleEn": "Ancient Era",
+        "titleAr": "العصر القديم",
+        "content": {
+          "bn": "মানব সভ্যতার শুরু প্রাচীন যুগে। এই সময়ে মানুষ শিকার ও সংগ্রহ নির্ভর জীবন থেকে কৃষিভিত্তিক সমাজে পরিবর্তিত হতে শুরু করে। মিশর, মেসোপটেমিয়া, সিন্ধু ও চীন—এগুলো ছিল প্রাচীন সভ্যতার প্রধান কেন্দ্র।",
+          "en": "The roots of human civilization lie in the ancient era. Humans shifted from a hunter-gatherer lifestyle to an agricultural society. Egypt, Mesopotamia, the Indus Valley, and China were major centers of ancient civilization."
+        }
+      },
+      {
+        "titleBn": "মধ্যযুগ",
+        "titleEn": "Medieval Era",
+        "titleAr": "العصر الوسيط",
+        "content": {
+          "bn": "মধ্যযুগে সামন্তবাদ, সাম্রাজ্য বিস্তার, ধর্মীয় প্রভাব ও বাণিজ্য ব্যবস্থার উন্নতি লক্ষণীয়। ইসলামী সভ্যতা এই সময়ে বিজ্ঞানে, সাহিত্য, গণিত ও চিকিৎসায় অসাধারণ অবদান রাখে।",
+          "en": "The medieval era was marked by feudalism, imperial expansion, strong religious influence, and the growth of trade systems. The Islamic civilization made remarkable contributions in science, literature, mathematics, and medicine."
+        }
+      },
+      {
+        "titleBn": "আধুনিক যুগ",
+        "titleEn": "Modern Era",
+        "titleAr": "العصر الحديث",
+        "content": {
+          "bn": "আধুনিক যুগে শিল্প বিপ্লব, বিজ্ঞান ও প্রযুক্তির উন্নতি, জাতীয়তাবাদ এবং গণতান্ত্রিক রাজনৈতিক ধারা বিকশিত হয়। এই যুগ মানব সমাজকে দ্রুতগতিতে এগিয়ে নিয়ে আসে।",
+          "en": "The modern era introduced the industrial revolution, advancements in science and technology, the rise of nationalism, and democratic political systems. This era accelerated human progress significantly."
+        }
+      },
+      {
+        "titleBn": "সমসাময়িক যুগ",
+        "titleEn": "Contemporary Era",
+        "titleAr": "العصر المعاصر",
+        "content": {
+          "bn": "সমসাময়িক যুগ প্রযুক্তি, তথ্যপ্রযুক্তি, বৈশ্বিক যোগাযোগ, অর্থনীতি ও আন্তর্জাতিক সম্পর্কের জটিল পরিবর্তনের যুগ। এই যুগে বিশ্ব একে অপরের সাথে আরও ঘনিষ্ঠভাবে যুক্ত।",
+          "en": "The contemporary era is characterized by rapid technological progress, information technology, global connectivity, complex economic systems, and international relations. The world is more interconnected than ever."
+        }
+      }
+    ],
+    "conclusion": {
+      "bn": "ইতিহাস কেবল অতীতের গল্প নয়—এটি ভবিষ্যতের দিকনির্দেশনা। ইতিহাস জানলে মানুষ ভুল পুনরাবৃত্তি এড়াতে পারে এবং উন্নত সভ্যতা গড়ে তুলতে পারে।",
+      "en": "History is not just a collection of past stories—it is a guide to the future. Understanding history helps humanity avoid repeating mistakes and build a better civilization."
+    }
+  }
+}
