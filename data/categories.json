@@ -1,1 +1,7 @@
-
+[
+  { "id": "aqeedah", "titleBn": "আকীদা", "titleEn": "Aqidah", "titleAr": "العقيدة" },
+  { "id": "fiqh",    "titleBn": "ফিকহ",  "titleEn": "Fiqh",   "titleAr": "الفقه" },
+  { "id": "seerah",  "titleBn": "সীরাহ", "titleEn": "Seerah", "titleAr": "السيرة النبوية" },
+  { "id": "hadith",  "titleBn": "হাদীস", "titleEn": "Hadith", "titleAr": "الحديث" },
+  { "id": "tafseer", "titleBn": "তাফসীর","titleEn": "Tafseer","titleAr": "التفسير" }
+]
