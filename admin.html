@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --sidebar-width: 300px;
             --chat-width: 380px;
         }
 
@@ -32,24 +31,10 @@
             border-radius: 3px;
         }
 
-        /* Layout */
+        /* Sidebar Styles */
         .sidebar {
-            width: var(--sidebar-width);
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            border-right: 1px solid var(--bs-border-color);
-            background: var(--bs-body-bg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
             min-height: 100vh;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
         }
 
         /* AI Floating Widget */
@@ -148,98 +133,129 @@
 </head>
 
 <body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-body-tertiary sidebar collapse">
+                <div class="position-sticky pt-3" style="height: 100vh; overflow-y: auto;">
+                    <div class="d-flex align-items-center justify-content-between px-3 mb-4">
+                        <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-book-half me-2"></i>SunnahWay</h5>
+                    </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar p-3">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-book-half me-2"></i>SunnahWay</h5>
-            <div class="dropdown">
-                <button class="btn btn-link text-reset p-0" data-bs-toggle="dropdown"><i
-                        class="bi bi-three-dots-vertical"></i></button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <h6 class="dropdown-header">Theme</h6>
-                    </li>
-                    <li><button class="dropdown-item" onclick="setTheme('light')">☀️ Light</button></li>
-                    <li><button class="dropdown-item" onclick="setTheme('dark')">🌙 Dark</button></li>
-                    <li><button class="dropdown-item" onclick="setTheme('forest')">🌿 Forest</button></li>
-                    <li><button class="dropdown-item" onclick="setTheme('midnight')">🌌 Midnight</button></li>
-                </ul>
-            </div>
-        </div>
+                    <div class="mb-3 px-3">
+                        <label class="form-label fw-bold">Select Category</label>
+                        <select id="category" class="form-select" onchange="loadArticles()">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="d-grid gap-2 px-3">
+                        <button class="btn btn-primary" onclick="createNew()">+ New Article</button>
+                        <button class="btn btn-outline-secondary" onclick="openCategoryModal()">Manage
+                            Categories</button>
+                    </div>
 
-        <div class="mb-3">
-            <select id="category" class="form-select" onchange="loadArticles()">
-                <option value="seerah">Seerah (সীরাত)</option>
-                <option value="aqeedah">Aqeedah (আকিদাহ)</option>
-                <option value="fiqh">Fiqh (ফিকহ)</option>
-                <option value="hadith">Hadith (হাদিস)</option>
-                <option value="tafseer">Tafseer (তাফসির)</option>
-            </select>
-        </div>
+                    <hr class="my-3 mx-3">
 
-        <button onclick="createNew()" class="btn btn-primary w-100 mb-3"><i class="bi bi-plus-lg"></i> New
-            Article</button>
-        <div id="articleList" class="list-group list-group-flush flex-grow-1 overflow-auto"></div>
-    </div>
+                    <!-- Theme Selector -->
+                    <div class="px-3 mb-3">
+                        <label class="form-label small text-muted">Theme</label>
+                        <select class="form-select form-select-sm" onchange="setTheme(this.value)">
+                            <option value="light">☀️ Light</option>
+                            <option value="dark">🌙 Dark</option>
+                            <option value="forest">🌲 Forest</option>
+                            <option value="midnight">🌌 Midnight</option>
+                        </select>
+                    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container-fluid p-0">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="mb-0">Editor</h2>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" onclick="openSettings()"><i class="bi bi-gear"></i> API
-                        Keys</button>
-                    <button onclick="publishArticle()" class="btn btn-success"><i
-                            class="bi bi-cloud-upload me-2"></i>Save & Publish</button>
-                </div>
-            </div>
-
-            <input type="hidden" id="articleId">
-
-            <!-- Title Inputs -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <div class="form-floating"><input type="text" id="titleBn" class="form-control"
-                            placeholder="Title"><label>Title (Bangla)</label></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-floating"><input type="text" id="titleEn" class="form-control"
-                            placeholder="Title"><label>Title (English)</label></div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-floating"><input type="text" id="titleAr" class="form-control" placeholder="Title"
-                            dir="rtl"><label>Title (Arabic)</label></div>
-                </div>
-            </div>
-
-            <!-- Editor Area -->
-            <div class="card mb-3 shadow-sm">
-                <div class="card-header bg-transparent py-2">
-                    <ul class="nav nav-tabs card-header-tabs" id="langTabs" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" id="bn-tab" data-bs-toggle="tab"
-                                data-bs-target="#bn-content">🇧🇩 Bangla</button></li>
-                        <li class="nav-item"><button class="nav-link" id="en-tab" data-bs-toggle="tab"
-                                data-bs-target="#en-content">🇺🇸 English</button></li>
-                        <li class="nav-item"><button class="nav-link" id="ar-tab" data-bs-toggle="tab"
-                                data-bs-target="#ar-content">🇸🇦 Arabic</button></li>
-                    </ul>
-                </div>
-                <div class="card-body p-0">
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="bn-content"><textarea id="contentBn"
-                                class="form-control border-0 p-3" rows="20"
-                                placeholder="Write content here..."></textarea></div>
-                        <div class="tab-pane fade" id="en-content"><textarea id="contentEn"
-                                class="form-control border-0 p-3" rows="20"
-                                placeholder="Write content here..."></textarea></div>
-                        <div class="tab-pane fade" id="ar-content"><textarea id="contentAr"
-                                class="form-control border-0 p-3" rows="20" placeholder="Write content here..."
-                                dir="rtl"></textarea></div>
+                    <div class="list-group list-group-flush mt-3 pb-5" id="articleList">
+                        <!-- Article List -->
                     </div>
                 </div>
-            </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-primary">Editor</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0 gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="openSettings()">
+                            <i class="bi bi-gear"></i> Settings
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="publishArticle()">
+                            <i class="bi bi-cloud-upload"></i> Save & Publish
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="articleId">
+                <input type="hidden" id="originalCategory">
+
+                <!-- Title Inputs & Category Select -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select id="editorCategory" class="form-select">
+                                <!-- Populated dynamically -->
+                            </select>
+                            <label>Category</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" id="titleBn" class="form-control" placeholder="Title">
+                            <label>Title (Bangla)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" id="titleEn" class="form-control" placeholder="Title">
+                            <label>Title (English)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" id="titleAr" class="form-control" placeholder="Title" dir="rtl">
+                            <label>Title (Arabic)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor Area -->
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header bg-transparent py-2">
+                        <ul class="nav nav-tabs card-header-tabs" id="langTabs" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" id="bn-tab" data-bs-toggle="tab"
+                                    data-bs-target="#bn-content">🇧🇩 Bangla</button></li>
+                            <li class="nav-item"><button class="nav-link" id="en-tab" data-bs-toggle="tab"
+                                    data-bs-target="#en-content">🇺🇸 English</button></li>
+                            <li class="nav-item"><button class="nav-link" id="ar-tab" data-bs-toggle="tab"
+                                    data-bs-target="#ar-content">🇸🇦 Arabic</button></li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="bn-content"><textarea id="contentBn"
+                                    class="form-control border-0 p-3" rows="20"
+                                    placeholder="Write content here..."></textarea></div>
+                            <div class="tab-pane fade" id="en-content"><textarea id="contentEn"
+                                    class="form-control border-0 p-3" rows="20"
+                                    placeholder="Write content here..."></textarea></div>
+                            <div class="tab-pane fade" id="ar-content"><textarea id="contentAr"
+                                    class="form-control border-0 p-3" rows="20" placeholder="Write content here..."
+                                    dir="rtl"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Button (Only visible when editing existing) -->
+                <div class="d-flex justify-content-between">
+                    <button id="deleteBtn" onclick="deleteArticle()" class="btn btn-outline-danger"
+                        style="display: none;">
+                        <i class="bi bi-trash"></i> Delete Article
+                    </button>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -295,7 +311,8 @@
                 <div class="text-center mb-4">
                     <div class="display-1 mb-2">⚡</div>
                     <h5>Article Generator</h5>
-                    <p class="text-muted small">Enter a topic and I will write the full article in 3 languages and fill
+                    <p class="text-muted small">Enter a topic and I will write the full article in 3 languages and
+                        fill
                         the editor.</p>
                 </div>
                 <div class="mb-3">
@@ -307,6 +324,45 @@
                     <i class="bi bi-magic me-2"></i>Generate Article
                 </button>
                 <div id="agentStatus" class="text-center small text-muted"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Categories Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Categories</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add New Category Form -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title mb-3">Add New Category</h6>
+                            <div class="row g-2">
+                                <div class="col-md-3"><input type="text" id="newCatId"
+                                        class="form-control form-control-sm" placeholder="ID (e.g. history)"></div>
+                                <div class="col-md-3"><input type="text" id="newCatBn"
+                                        class="form-control form-control-sm" placeholder="Bangla Name"></div>
+                                <div class="col-md-3"><input type="text" id="newCatEn"
+                                        class="form-control form-control-sm" placeholder="English Name"></div>
+                                <div class="col-md-3"><input type="text" id="newCatAr"
+                                        class="form-control form-control-sm" placeholder="Arabic Name" dir="rtl">
+                                </div>
+                                <div class="col-12 mt-2"><button class="btn btn-sm btn-success w-100"
+                                        onclick="addCategory()">Add Category</button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category List -->
+                    <h6 class="mb-3">Existing Categories</h6>
+                    <div class="list-group" id="categoryListModal">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -329,8 +385,15 @@
                         </div>
                         <div id="geminiStatus" class="form-text"></div>
                     </div>
-                    <div class="mb-3"><label class="form-label">OpenAI API Key</label><input type="password"
-                            id="openaiKey" class="form-control"></div>
+                    <div class="mb-3">
+                        <label class="form-label">OpenAI API Key</label>
+                        <div class="input-group">
+                            <input type="password" id="openaiKey" class="form-control">
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="testOpenAIConnection()">Test Key</button>
+                        </div>
+                        <div id="openaiStatus" class="form-text"></div>
+                    </div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-primary"
                         onclick="saveSettings()">Save</button></div>
@@ -343,11 +406,115 @@
 
     <script>
         // --- Init ---
-        window.onload = () => {
+        window.onload = async () => {
+            await fetchCategories();
             loadArticles();
             setTheme(localStorage.getItem('app_theme') || 'light');
             loadSettings();
         };
+
+        // --- Category Logic ---
+        async function fetchCategories() {
+            try {
+                const res = await fetch('/api/categories');
+                const categories = await res.json();
+
+                const sidebarSelect = document.getElementById('category');
+                const editorSelect = document.getElementById('editorCategory');
+                const modalList = document.getElementById('categoryListModal');
+
+                // Save current selection if any
+                const currentSidebarVal = sidebarSelect.value;
+                const currentEditorVal = editorSelect.value;
+
+                sidebarSelect.innerHTML = '';
+                editorSelect.innerHTML = '';
+                modalList.innerHTML = '';
+
+                categories.forEach(cat => {
+                    // Populate Selects
+                    const optionText = `${cat.titleEn} (${cat.titleBn})`;
+                    sidebarSelect.add(new Option(optionText, cat.id));
+                    editorSelect.add(new Option(optionText, cat.id));
+
+                    // Populate Modal List
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    item.innerHTML = `
+                        <div>
+                            <strong>${cat.titleEn}</strong> <small class="text-muted">(${cat.titleBn})</small><br>
+                            <small class="text-muted">ID: ${cat.id}</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory('${cat.id}')"><i class="bi bi-trash"></i></button>
+                    `;
+                    modalList.appendChild(item);
+                });
+
+                // Restore selection or default to first
+                if (currentSidebarVal && categories.some(c => c.id === currentSidebarVal)) sidebarSelect.value = currentSidebarVal;
+                if (currentEditorVal && categories.some(c => c.id === currentEditorVal)) editorSelect.value = currentEditorVal;
+
+            } catch (e) { console.error('Failed to fetch categories', e); }
+        }
+
+        function openCategoryModal() {
+            new bootstrap.Modal(document.getElementById('categoryModal')).show();
+        }
+
+        async function addCategory() {
+            const id = document.getElementById('newCatId').value.trim();
+            const titleBn = document.getElementById('newCatBn').value.trim();
+            const titleEn = document.getElementById('newCatEn').value.trim();
+            const titleAr = document.getElementById('newCatAr').value.trim();
+
+            if (!id || !titleBn || !titleEn) return Swal.fire('Error', 'ID, Bangla & English titles required', 'error');
+
+            try {
+                await fetch('/api/categories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, titleBn, titleEn, titleAr })
+                });
+
+                // Push to GitHub
+                await fetch('/api/push', { method: 'POST' });
+
+                // Clear inputs
+                ['newCatId', 'newCatBn', 'newCatEn', 'newCatAr'].forEach(i => document.getElementById(i).value = '');
+
+                await fetchCategories();
+                Swal.fire('Success', 'Category added & Pushed to GitHub', 'success');
+            } catch (e) { Swal.fire('Error', e.message, 'error'); }
+        }
+
+        async function deleteCategory(id) {
+            const result = await Swal.fire({
+                title: 'Delete Category?',
+                text: `This will delete the category "${id}" and its data file.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Deleting...', didOpen: () => Swal.showLoading() });
+                try {
+                    await fetch('/api/categories/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+
+                    // Push to GitHub
+                    await fetch('/api/push', { method: 'POST' });
+
+                    await fetchCategories();
+                    Swal.fire('Deleted!', 'Category deleted & changes pushed.', 'success');
+                    loadArticles(); // Refresh article list as category might be gone
+                } catch (e) { Swal.fire('Error', e.message, 'error'); }
+            }
+        }
 
         // --- UI Logic ---
         function setTheme(theme) {
@@ -397,11 +564,38 @@
             }
         }
 
+        async function testOpenAIConnection() {
+            const key = document.getElementById('openaiKey').value;
+            const statusDiv = document.getElementById('openaiStatus');
+            if (!key) { statusDiv.innerHTML = '<span class="text-danger">Enter key first</span>'; return; }
+
+            statusDiv.innerHTML = '<span class="text-info">Testing...</span>';
+
+            try {
+                const res = await fetch('https://api.openai.com/v1/models', {
+                    headers: { 'Authorization': `Bearer ${key}` }
+                });
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error.message);
+
+                statusDiv.innerHTML = '<span class="text-success">Success! Key is valid.</span>';
+            } catch (e) {
+                statusDiv.innerHTML = `<span class="text-danger">Error: ${e.message}</span>`;
+            }
+        }
+
         // --- Core Functions ---
         async function loadArticles() {
             const category = document.getElementById('category').value;
             const listDiv = document.getElementById('articleList');
             listDiv.innerHTML = '<div class="text-center text-muted mt-3"><div class="spinner-border spinner-border-sm"></div> Loading...</div>';
+
+            if (!category) {
+                listDiv.innerHTML = '<div class="text-center text-muted mt-3">Please select a category</div>';
+                return;
+            }
+
             try {
                 const res = await fetch(`/api/articles/${category}`);
                 const articles = await res.json();
@@ -419,19 +613,39 @@
 
         function loadEditor(article) {
             document.getElementById('articleId').value = article.id;
+
+            // Set category
+            const currentCategory = document.getElementById('category').value;
+            document.getElementById('editorCategory').value = currentCategory;
+            document.getElementById('originalCategory').value = currentCategory;
+
+            // Show delete button
+            document.getElementById('deleteBtn').style.display = 'block';
+
             ['titleBn', 'titleEn', 'titleAr', 'contentBn', 'contentEn', 'contentAr'].forEach(id => document.getElementById(id).value = article[id] || '');
         }
 
         function createNew() {
             document.getElementById('articleId').value = '';
+            document.getElementById('originalCategory').value = '';
+
+            // Set default category to sidebar selection
+            document.getElementById('editorCategory').value = document.getElementById('category').value;
+
+            // Hide delete button
+            document.getElementById('deleteBtn').style.display = 'none';
+
             ['titleBn', 'titleEn', 'titleAr', 'contentBn', 'contentEn', 'contentAr'].forEach(id => document.getElementById(id).value = '');
         }
 
         async function publishArticle() {
-            const category = document.getElementById('category').value;
+            const targetCategory = document.getElementById('editorCategory').value;
+            const originalCategory = document.getElementById('originalCategory').value;
+            const articleId = document.getElementById('articleId').value || `${targetCategory}-${Date.now()}`;
+
             const article = {
-                id: document.getElementById('articleId').value || `${category}-${Date.now()}`,
-                categoryId: category,
+                id: articleId,
+                categoryId: targetCategory,
                 titleBn: document.getElementById('titleBn').value,
                 titleEn: document.getElementById('titleEn').value,
                 titleAr: document.getElementById('titleAr').value,
@@ -444,11 +658,67 @@
             Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading() });
 
             try {
-                await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category, article }) });
+                // If category changed and it's an existing article, delete from old category first
+                if (originalCategory && originalCategory !== targetCategory) {
+                    await fetch('/api/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category: originalCategory, id: articleId })
+                    });
+                }
+
+                await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ category: targetCategory, article }) });
                 await fetch('/api/push', { method: 'POST' });
+
                 Swal.fire('Published!', 'Saved to GitHub', 'success');
-                loadArticles();
+
+                // Refresh list if we are viewing the target category or the original one
+                const sidebarCategory = document.getElementById('category').value;
+                if (sidebarCategory === targetCategory || sidebarCategory === originalCategory) {
+                    loadArticles();
+                }
+
+                // Update original category to new one
+                document.getElementById('originalCategory').value = targetCategory;
+                document.getElementById('deleteBtn').style.display = 'block';
+                document.getElementById('articleId').value = articleId;
+
             } catch (e) { Swal.fire('Failed', e.message, 'error'); }
+        }
+
+        async function deleteArticle() {
+            const id = document.getElementById('articleId').value;
+            const category = document.getElementById('originalCategory').value; // Delete from where it was loaded
+
+            if (!id) return;
+
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Deleting...', didOpen: () => Swal.showLoading() });
+                try {
+                    await fetch('/api/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, id })
+                    });
+                    await fetch('/api/push', { method: 'POST' });
+
+                    Swal.fire('Deleted!', 'Article has been deleted.', 'success');
+                    createNew(); // Clear editor
+                    loadArticles(); // Refresh list
+                } catch (e) {
+                    Swal.fire('Error', e.message, 'error');
+                }
+            }
         }
 
         // --- AI Logic ---
