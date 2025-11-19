@@ -101,12 +101,14 @@
 
                 <div class="d-flex gap-2">
                     <button onclick="publishArticle()" class="btn btn-primary flex-grow-1">� Save & Publish</button>
+                    <button onclick="publishArticle()" class="btn btn-primary flex-grow-1">✅ Save & Publish</button>
                 </div>
                 <div id="status" class="mt-3 text-center"></div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Load articles on start
         window.onload = loadArticles;
@@ -114,30 +116,35 @@
         async function loadArticles() {
             const category = document.getElementById('category').value;
             const listDiv = document.getElementById('articleList');
-            listDiv.innerHTML = '<div class="text-center">Loading...</div>';
+            listDiv.innerHTML = '<div class="text-center text-muted mt-3">Loading...</div>';
 
             try {
                 const res = await fetch(`/api/articles/${category}`);
                 const articles = await res.json();
 
                 listDiv.innerHTML = '';
+                if (articles.length === 0) {
+                    listDiv.innerHTML = '<div class="text-center text-muted mt-3">No articles found</div>';
+                    return;
+                }
+
                 articles.forEach(article => {
                     const item = document.createElement('a');
                     item.className = 'list-group-item list-group-item-action';
                     item.style.cursor = 'pointer';
                     item.innerHTML = `
-                    <div class="fw-bold">${article.titleBn || 'No Title'}</div>
-                    <small class="text-muted">${article.titleEn || ''}</small>
-                `;
-                    item.onclick = (event) => loadEditor(article, event); // Pass event to loadEditor
+                        <div class="fw-bold">${article.titleBn || 'No Title'}</div>
+                        <small class="text-muted">${article.titleEn || ''}</small>
+                    `;
+                    item.onclick = (event) => loadEditor(article, event);
                     listDiv.appendChild(item);
                 });
             } catch (e) {
-                listDiv.innerHTML = '<div class="text-danger">Failed to load</div>';
+                listDiv.innerHTML = '<div class="text-danger text-center mt-3">Failed to load</div>';
             }
         }
 
-        function loadEditor(article, event) { // Accept event parameter
+        function loadEditor(article, event) {
             document.getElementById('articleId').value = article.id;
             document.getElementById('titleBn').value = article.titleBn || '';
             document.getElementById('titleEn').value = article.titleEn || '';
@@ -146,7 +153,7 @@
 
             // Highlight selected
             document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
-            if (event && event.currentTarget) { // Check if event and currentTarget exist
+            if (event && event.currentTarget) {
                 event.currentTarget.classList.add('active');
             }
         }
@@ -158,6 +165,14 @@
             document.getElementById('titleAr').value = '';
             document.getElementById('contentBn').value = '';
             document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+
+            Swal.fire({
+                icon: 'info',
+                title: 'New Article Mode',
+                text: 'Fill the form to create a new article',
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
 
         function insertFormat(start, end) {
@@ -182,13 +197,23 @@
             const titleAr = document.getElementById('titleAr').value;
             const contentBn = document.getElementById('contentBn').value;
 
-            if (!titleBn || !contentBn) { alert('Please fill required fields'); return; }
+            if (!titleBn || !contentBn) {
+                Swal.fire('Error', 'Please fill at least Title (Bangla) and Content', 'error');
+                return;
+            }
 
-            const statusDiv = document.getElementById('status');
-            statusDiv.innerHTML = '<span class="text-primary">Saving locally...</span>';
+            // Show loading
+            Swal.fire({
+                title: 'Saving...',
+                text: 'Please wait while we save and push to GitHub',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
             const article = {
-                id: id || `${category}-${Date.now()}`, // Use existing ID or create new
+                id: id || `${category}-${Date.now()}`,
                 categoryId: category,
                 titleBn, titleEn, titleAr,
                 contentBn,
@@ -207,21 +232,25 @@
 
                 if (!saveData.success) throw new Error(saveData.message);
 
-                statusDiv.innerHTML = '<span class="text-warning">Pushing to GitHub...</span>';
-
                 // 2. Push to GitHub
                 const pushRes = await fetch('/api/push', { method: 'POST' });
                 const pushData = await pushRes.json();
 
                 if (!pushData.success) throw new Error(pushData.message);
 
-                statusDiv.innerHTML = '<span class="text-success">✅ Saved & Published!</span>';
+                // Success Message
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Published!',
+                    text: 'Article has been saved and pushed to GitHub.',
+                    confirmButtonColor: '#28a745'
+                });
 
-                // Reload list to show changes
+                // Reload list
                 loadArticles();
 
             } catch (error) {
-                statusDiv.innerHTML = `<span class="text-danger">❌ Error: ${error.message}</span>`;
+                Swal.fire('Failed', error.message, 'error');
                 console.error(error);
             }
         }
