@@ -1,162 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SunnahWay Article Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; padding: 20px; }
-        .container { max-width: 800px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        .preview { background: #f1f1f1; padding: 15px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap; }
-        .btn-toolbar { margin-bottom: 10px; }
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview {
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        .btn-toolbar {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h2 class="text-center mb-4">SunnahWay Article Admin</h2>
-    
-    <div class="mb-3">
-        <label class="form-label">GitHub Token (One time)</label>
-        <input type="password" id="token" class="form-control" placeholder="ghp_xxxxxxxxxxxx">
-        <div class="form-text">Settings -> Developer settings -> Personal access tokens -> Generate new token (Select 'repo' scope)</div>
-    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar: Article List -->
+            <div class="col-md-3 bg-white p-3 border-end" style="min-height: 100vh;">
+                <h4 class="text-center mb-3">Articles</h4>
 
-    <hr>
+                <div class="mb-3">
+                    <select id="category" class="form-select" onchange="loadArticles()">
+                        <option value="seerah">Seerah (সীরাত)</option>
+                        <option value="aqeedah">Aqeedah (আকিদাহ)</option>
+                        <option value="fiqh">Fiqh (ফিকহ)</option>
+                        <option value="hadith">Hadith (হাদিস)</option>
+                        <option value="tafseer">Tafseer (তাফসির)</option>
+                    </select>
+                </div>
 
-    <div class="mb-3">
-        <label class="form-label">Category</label>
-        <select id="category" class="form-select">
-            <option value="seerah">Seerah (সীরাত)</option>
-            <option value="aqeedah">Aqeedah (আকিদাহ)</option>
-            <option value="fiqh">Fiqh (ফিকহ)</option>
-            <option value="hadith">Hadith (হাদিস)</option>
-            <option value="tafseer">Tafseer (তাফসির)</option>
-        </select>
-    </div>
+                <button onclick="createNew()" class="btn btn-success w-100 mb-3">+ New Article</button>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Title (Bangla)</label>
-            <input type="text" id="titleBn" class="form-control" placeholder="বাংলা শিরোনাম">
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Title (English)</label>
-            <input type="text" id="titleEn" class="form-control" placeholder="English Title">
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Title (Arabic)</label>
-            <input type="text" id="titleAr" class="form-control" placeholder="العنوان العربي">
-        </div>
-    </div>
+                <div id="articleList" class="list-group">
+                    <!-- Articles will load here -->
+                </div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label">Content (Bangla)</label>
-        <div class="btn-toolbar" role="toolbar">
-            <div class="btn-group me-2" role="group">
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertFormat('**', '**')"><b>Bold</b></button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertFormat('*', '*')"><i>Italic</i></button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertFormat('## ', '')">Heading</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="insertFormat('\n- ', '')">List</button>
+            <!-- Main: Editor -->
+            <div class="col-md-9 p-4">
+                <h2 class="text-center mb-4">SunnahWay Editor</h2>
+
+                <input type="hidden" id="articleId"> <!-- Hidden ID for updates -->
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Title (Bangla)</label>
+                        <input type="text" id="titleBn" class="form-control" placeholder="বাংলা শিরোনাম">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Title (English)</label>
+                        <input type="text" id="titleEn" class="form-control" placeholder="English Title">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Title (Arabic)</label>
+                        <input type="text" id="titleAr" class="form-control" placeholder="العنوان العربي">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Content (Bangla)</label>
+                    <div class="btn-toolbar mb-2" role="toolbar">
+                        <div class="btn-group me-2" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="insertFormat('**', '**')"><b>Bold</b></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="insertFormat('*', '*')"><i>Italic</i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="insertFormat('## ', '')">Heading</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="insertFormat('\n- ', '')">List</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                onclick="insertFormat('\n\n', '')">New Para</button>
+                        </div>
+                    </div>
+                    <textarea id="contentBn" class="form-control" rows="15" placeholder="এখানে লিখুন..."></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button onclick="publishArticle()" class="btn btn-primary flex-grow-1">� Save & Publish</button>
+                </div>
+                <div id="status" class="mt-3 text-center"></div>
             </div>
         </div>
-        <textarea id="contentBn" class="form-control" rows="10" placeholder="এখানে লিখুন..."></textarea>
     </div>
 
-    <button onclick="publishArticle()" class="btn btn-primary w-100">🚀 Publish Article</button>
-    <div id="status" class="mt-3 text-center"></div>
-</div>
+    <script>
+        // Load articles on start
+        window.onload = loadArticles;
 
-<script>
-    function insertFormat(start, end) {
-        const textarea = document.getElementById('contentBn');
-        const startPos = textarea.selectionStart;
-        const endPos = textarea.selectionEnd;
-        const text = textarea.value;
-        const selectedText = text.substring(startPos, endPos);
-        
-        const newText = text.substring(0, startPos) + start + selectedText + end + text.substring(endPos);
-        textarea.value = newText;
-        textarea.focus();
-        textarea.selectionStart = startPos + start.length;
-        textarea.selectionEnd = endPos + start.length;
-    }
+        async function loadArticles() {
+            const category = document.getElementById('category').value;
+            const listDiv = document.getElementById('articleList');
+            listDiv.innerHTML = '<div class="text-center">Loading...</div>';
 
-    async function publishArticle() {
-        const token = document.getElementById('token').value;
-        if (!token) { alert('Please enter GitHub Token'); return; }
+            try {
+                const res = await fetch(`/api/articles/${category}`);
+                const articles = await res.json();
 
-        const category = document.getElementById('category').value;
-        const titleBn = document.getElementById('titleBn').value;
-        const titleEn = document.getElementById('titleEn').value;
-        const titleAr = document.getElementById('titleAr').value;
-        const contentBn = document.getElementById('contentBn').value;
+                listDiv.innerHTML = '';
+                articles.forEach(article => {
+                    const item = document.createElement('a');
+                    item.className = 'list-group-item list-group-item-action';
+                    item.style.cursor = 'pointer';
+                    item.innerHTML = `
+                    <div class="fw-bold">${article.titleBn || 'No Title'}</div>
+                    <small class="text-muted">${article.titleEn || ''}</small>
+                `;
+                    item.onclick = (event) => loadEditor(article, event); // Pass event to loadEditor
+                    listDiv.appendChild(item);
+                });
+            } catch (e) {
+                listDiv.innerHTML = '<div class="text-danger">Failed to load</div>';
+            }
+        }
 
-        if (!titleBn || !contentBn) { alert('Please fill required fields'); return; }
+        function loadEditor(article, event) { // Accept event parameter
+            document.getElementById('articleId').value = article.id;
+            document.getElementById('titleBn').value = article.titleBn || '';
+            document.getElementById('titleEn').value = article.titleEn || '';
+            document.getElementById('titleAr').value = article.titleAr || '';
+            document.getElementById('contentBn').value = article.contentBn || '';
 
-        const statusDiv = document.getElementById('status');
-        statusDiv.innerHTML = '<span class="text-primary">Fetching existing articles...</span>';
+            // Highlight selected
+            document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+            if (event && event.currentTarget) { // Check if event and currentTarget exist
+                event.currentTarget.classList.add('active');
+            }
+        }
 
-        const repo = 'nokibulhasansiam3-sta/sunnahway-Article';
-        const path = `data/${category}.json`;
-        const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+        function createNew() {
+            document.getElementById('articleId').value = '';
+            document.getElementById('titleBn').value = '';
+            document.getElementById('titleEn').value = '';
+            document.getElementById('titleAr').value = '';
+            document.getElementById('contentBn').value = '';
+            document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+        }
 
-        try {
-            // 1. Get existing file
-            const getRes = await fetch(url, {
-                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-            });
-            
-            if (!getRes.ok) throw new Error('Failed to fetch file');
-            
-            const fileData = await getRes.json();
-            const content = atob(fileData.content); // Decode Base64
-            const articles = JSON.parse(content);
+        function insertFormat(start, end) {
+            const textarea = document.getElementById('contentBn');
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+            const selectedText = text.substring(startPos, endPos);
 
-            // 2. Add new article
-            const newArticle = {
-                id: `${category}-${Date.now()}`,
+            const newText = text.substring(0, startPos) + start + selectedText + end + text.substring(endPos);
+            textarea.value = newText;
+            textarea.focus();
+            textarea.selectionStart = startPos + start.length;
+            textarea.selectionEnd = endPos + start.length;
+        }
+
+        async function publishArticle() {
+            const category = document.getElementById('category').value;
+            const id = document.getElementById('articleId').value;
+            const titleBn = document.getElementById('titleBn').value;
+            const titleEn = document.getElementById('titleEn').value;
+            const titleAr = document.getElementById('titleAr').value;
+            const contentBn = document.getElementById('contentBn').value;
+
+            if (!titleBn || !contentBn) { alert('Please fill required fields'); return; }
+
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<span class="text-primary">Saving locally...</span>';
+
+            const article = {
+                id: id || `${category}-${Date.now()}`, // Use existing ID or create new
                 categoryId: category,
                 titleBn, titleEn, titleAr,
                 contentBn,
                 contentEn: "Content coming soon...",
                 contentAr: "المحتوى قريبا..."
             };
-            
-            articles.push(newArticle);
 
-            // 3. Update file
-            const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(articles, null, 2)))); // Encode Base64
-            
-            const putRes = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `Add new article: ${titleBn}`,
-                    content: newContent,
-                    sha: fileData.sha
-                })
-            });
+            try {
+                // 1. Save Locally
+                const saveRes = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, article })
+                });
+                const saveData = await saveRes.json();
 
-            if (putRes.ok) {
-                statusDiv.innerHTML = '<span class="text-success">✅ Article Published Successfully! Check your app.</span>';
-                document.getElementById('titleBn').value = '';
-                document.getElementById('contentBn').value = '';
-            } else {
-                throw new Error('Failed to update file');
+                if (!saveData.success) throw new Error(saveData.message);
+
+                statusDiv.innerHTML = '<span class="text-warning">Pushing to GitHub...</span>';
+
+                // 2. Push to GitHub
+                const pushRes = await fetch('/api/push', { method: 'POST' });
+                const pushData = await pushRes.json();
+
+                if (!pushData.success) throw new Error(pushData.message);
+
+                statusDiv.innerHTML = '<span class="text-success">✅ Saved & Published!</span>';
+
+                // Reload list to show changes
+                loadArticles();
+
+            } catch (error) {
+                statusDiv.innerHTML = `<span class="text-danger">❌ Error: ${error.message}</span>`;
+                console.error(error);
             }
-
-        } catch (error) {
-            statusDiv.innerHTML = `<span class="text-danger">❌ Error: ${error.message}</span>`;
-            console.error(error);
         }
-    }
-</script>
-
+    </script>
 </body>
+
 </html>
