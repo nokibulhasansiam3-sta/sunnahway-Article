@@ -151,7 +151,7 @@ app.post('/api/push', (req, res) => {
   });
 });
 
-const PORT = 3000;
+const PORT = 8081;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/admin.html`);
 });
