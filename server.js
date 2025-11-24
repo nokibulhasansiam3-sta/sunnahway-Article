@@ -11,11 +11,33 @@ app.use(express.static(__dirname));
 
 const DATA_DIR = path.join(__dirname, 'data');
 
-// Get Articles by Category
-app.get('/api/articles/:category', (req, res) => {
-  const { category } = req.params;
-  const filePath = path.join(__dirname, 'data', `${category}.json`);
+// Get all categories
+app.get('/articles/categories', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'categories.json');
+  if (fs.existsSync(filePath)) {
+    res.json(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+  } else {
+    res.json([]);
+  }
+});
 
+// Legacy endpoint for admin panel
+app.get('/api/categories', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'categories.json');
+  if (fs.existsSync(filePath)) {
+    res.json(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+  } else {
+    res.json([]);
+  }
+});
+
+// Get articles by category (query param)
+app.get('/articles', (req, res) => {
+  const { categoryId } = req.query;
+  if (!categoryId) {
+    return res.status(400).json({ error: 'categoryId is required' });
+  }
+  const filePath = path.join(DATA_DIR, `${categoryId}.json`);
   if (fs.existsSync(filePath)) {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     res.json(JSON.parse(fileContent));
@@ -24,14 +46,35 @@ app.get('/api/articles/:category', (req, res) => {
   }
 });
 
-// Get all categories
-app.get('/api/categories', (req, res) => {
-  const filePath = path.join(DATA_DIR, 'categories.json');
+// Legacy endpoint for admin panel
+app.get('/api/articles/:category', (req, res) => {
+  const { category } = req.params;
+  const filePath = path.join(DATA_DIR, `${category}.json`);
   if (fs.existsSync(filePath)) {
-    res.json(JSON.parse(fs.readFileSync(filePath, 'utf8')));
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    res.json(JSON.parse(fileContent));
   } else {
     res.json([]);
   }
+});
+
+// Get single article by ID
+app.get('/articles/:articleId', (req, res) => {
+  const { articleId } = req.params;
+
+  // Search through all category files
+  const files = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.json') && f !== 'categories.json');
+
+  for (const file of files) {
+    const filePath = path.join(DATA_DIR, file);
+    const articles = JSON.parse(fs.readFileSync(filePath, 'utf8') || '[]');
+    const article = articles.find(a => a.id === articleId);
+    if (article) {
+      return res.json(article);
+    }
+  }
+
+  res.status(404).json({ error: 'Article not found' });
 });
 
 // Add/Update category
