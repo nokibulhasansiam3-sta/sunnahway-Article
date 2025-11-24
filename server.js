@@ -195,6 +195,24 @@ app.post('/api/push', (req, res) => {
 });
 
 const PORT = 8081;
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/admin.html`);
+const os = require('os');
+
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  const localIP = getLocalIP();
+  console.log(`\n🚀 Article Server is running!`);
+  console.log(`📱 Local:    http://localhost:${PORT}/admin.html`);
+  console.log(`📱 Network:  http://${localIP}:${PORT}/admin.html`);
+  console.log(`\n💡 Access from phone: Use the Network URL on same WiFi\n`);
 });
