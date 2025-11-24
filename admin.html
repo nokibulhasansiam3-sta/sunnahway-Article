@@ -133,6 +133,12 @@
                                 <i class="fas fa-file-alt text-emerald-400"></i> Content
                             </h3>
                             <div class="flex gap-2 bg-white/5 p-1 rounded-lg">
+                                <button onclick="autoTranslate()"
+                                    class="px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium transition flex items-center gap-2"
+                                    title="Translate from current tab to others">
+                                    <i class="fas fa-language"></i> Auto Translate
+                                </button>
+                                <div class="w-px bg-white/10 mx-1"></div>
                                 <button onclick="switchLang('bn')"
                                     class="lang-tab px-4 py-2 rounded-md transition active" data-lang="bn">🇧🇩
                                     BN</button>
@@ -528,6 +534,67 @@
             activeTab.classList.remove('text-gray-400');
 
             document.getElementById(`content${lang.charAt(0).toUpperCase() + lang.slice(1)}`).classList.remove('hidden');
+        }
+
+        // Translation
+        async function autoTranslate() {
+            // Determine active language
+            let sourceLang = 'bn';
+            document.querySelectorAll('.lang-tab').forEach(tab => {
+                if (tab.classList.contains('active')) sourceLang = tab.dataset.lang;
+            });
+
+            const titleId = `title${sourceLang.charAt(0).toUpperCase() + sourceLang.slice(1)}`;
+            const contentId = `content${sourceLang.charAt(0).toUpperCase() + sourceLang.slice(1)}`;
+
+            const sourceTitle = document.getElementById(titleId).value;
+            const sourceContent = document.getElementById(contentId).value;
+
+            if (!sourceTitle && !sourceContent) {
+                return Swal.fire('Warning', 'Please write something first!', 'warning');
+            }
+
+            Swal.fire({
+                title: 'Translating...',
+                text: 'Please wait while we translate your content.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const targets = ['bn', 'en', 'ar'].filter(l => l !== sourceLang);
+
+            try {
+                for (const target of targets) {
+                    const targetTitleId = `title${target.charAt(0).toUpperCase() + target.slice(1)}`;
+                    const targetContentId = `content${target.charAt(0).toUpperCase() + target.slice(1)}`;
+
+                    // Translate Title
+                    if (sourceTitle) {
+                        const res = await fetch('/api/translate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: sourceTitle, target })
+                        });
+                        const data = await res.json();
+                        if (data.translated) document.getElementById(targetTitleId).value = data.translated;
+                    }
+
+                    // Translate Content
+                    if (sourceContent) {
+                        const res = await fetch('/api/translate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: sourceContent, target })
+                        });
+                        const data = await res.json();
+                        if (data.translated) document.getElementById(targetContentId).value = data.translated;
+                    }
+                }
+                Swal.fire('Success', 'Translation complete!', 'success');
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', 'Translation failed', 'error');
+            }
         }
 
         // Search
