@@ -31,6 +31,95 @@ app.post('/api/translate', async (req, res) => {
   res.json({ translated });
 });
 
+// AI Proxy Endpoints
+app.post('/api/ai/test', async (req, res) => {
+  const { provider, key } = req.body;
+
+  try {
+    let success = false;
+    if (provider === 'gemini') {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
+      });
+      success = response.ok;
+      if (!success) {
+        const err = await response.text();
+        console.error('Gemini Error:', err);
+        return res.status(400).json({ error: err });
+      }
+    } else if (provider === 'openai') {
+      const response = await fetch('https://api.openai.com/v1/models', {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      success = response.ok;
+    } else if (provider === 'deepseek') {
+      const response = await fetch('https://api.deepseek.com/v1/models', {
+        headers: { 'Authorization': `Bearer ${key}` }
+      });
+      success = response.ok;
+    }
+
+    if (success) res.json({ success: true });
+    else res.status(400).json({ error: 'Invalid API Key' });
+  } catch (error) {
+    console.error('AI Test Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/ai/chat', async (req, res) => {
+  const { provider, key, message } = req.body;
+
+  try {
+    let responseText = '';
+
+    if (provider === 'gemini') {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+      });
+      const data = await response.json();
+      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error generating response';
+    } else if (provider === 'gpt') {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: message }]
+        })
+      });
+      const data = await response.json();
+      responseText = data.choices?.[0]?.message?.content || 'Error generating response';
+    } else if (provider === 'deepseek') {
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: message }]
+        })
+      });
+      const data = await response.json();
+      responseText = data.choices?.[0]?.message?.content || 'Error generating response';
+    }
+
+    res.json({ response: responseText });
+  } catch (error) {
+    console.error('AI Chat Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 const DATA_DIR = path.join(__dirname, 'data');
 
