@@ -4,10 +4,33 @@ const path = require('path');
 const { exec } = require('child_process');
 const cors = require('cors');
 
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.static(__dirname));
+
+// Translation Helper
+async function translateText(text, targetLang) {
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    return data[0].map(x => x[0]).join('');
+  } catch (error) {
+    console.error('Translation Error:', error);
+    return text; // Return original if failed
+  }
+}
+
+app.post('/api/translate', async (req, res) => {
+  const { text, target } = req.body;
+  if (!text || !target) return res.status(400).json({ error: 'Missing text or target' });
+
+  const translated = await translateText(text, target);
+  res.json({ translated });
+});
+
 
 const DATA_DIR = path.join(__dirname, 'data');
 
