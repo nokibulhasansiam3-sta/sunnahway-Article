@@ -38,16 +38,16 @@ app.post('/api/ai/test', async (req, res) => {
   try {
     let success = false;
     if (provider === 'gemini') {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
       });
       success = response.ok;
       if (!success) {
-        const err = await response.text();
-        console.error('Gemini Error:', err);
-        return res.status(400).json({ error: err });
+        const data = await response.json();
+        console.error('Gemini Test Error:', JSON.stringify(data, null, 2));
+        return res.status(400).json({ error: data.error?.message || 'Gemini API Error' });
       }
     } else if (provider === 'openai') {
       const response = await fetch('https://api.openai.com/v1/models', {
@@ -76,13 +76,25 @@ app.post('/api/ai/chat', async (req, res) => {
     let responseText = '';
 
     if (provider === 'gemini') {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`, {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
       });
+
       const data = await response.json();
-      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error generating response';
+
+      if (!response.ok) {
+        console.error('Gemini API Error:', JSON.stringify(data, null, 2));
+        return res.status(response.status).json({ error: data.error?.message || 'Gemini API Error' });
+      }
+
+      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!responseText) {
+        console.error('Unexpected Gemini Response:', JSON.stringify(data, null, 2));
+        return res.status(500).json({ error: 'Unexpected response format from Gemini' });
+      }
     } else if (provider === 'gpt') {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
