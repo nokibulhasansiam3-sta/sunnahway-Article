@@ -727,7 +727,14 @@
         }
 
         function openSettings() {
-            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+            const defaultKey = 'AIzaSyB3eQDpG_GR115eXeBL4Rgvv9V20VcqZfE';
+
+            // Set default if empty
+            if (!localStorage.getItem('geminiKey')) {
+                localStorage.setItem('geminiKey', defaultKey);
+            }
+
+            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey');
             document.getElementById('openaiKey').value = localStorage.getItem('openaiKey') || '';
             document.getElementById('deepseekKey').value = localStorage.getItem('deepseekKey') || '';
 
@@ -792,7 +799,13 @@
 
             // Get Config
             const model = document.getElementById('aiModel').value;
-            const key = localStorage.getItem(`${model}Key`);
+            let key = localStorage.getItem(`${model}Key`);
+
+            // Fallback for Gemini
+            if (model === 'gemini' && !key) {
+                key = 'AIzaSyB3eQDpG_GR115eXeBL4Rgvv9V20VcqZfE';
+                localStorage.setItem('geminiKey', key);
+            }
 
             if (!key) {
                 addMessage('Please configure your API key in settings first.', 'ai');
