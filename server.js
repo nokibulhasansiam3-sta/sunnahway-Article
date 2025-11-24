@@ -38,16 +38,23 @@ app.post('/api/ai/test', async (req, res) => {
   try {
     let success = false;
     if (provider === 'gemini') {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
-      });
-      success = response.ok;
+      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.0-pro', 'gemini-pro'];
+      for (const model of modelsToTry) {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
+          });
+          if (response.ok) {
+            success = true;
+            break;
+          }
+        } catch (e) { }
+      }
+
       if (!success) {
-        const data = await response.json();
-        console.error('Gemini Test Error:', JSON.stringify(data, null, 2));
-        return res.status(400).json({ error: data.error?.message || 'Gemini API Error' });
+        return res.status(400).json({ error: 'All Gemini models failed. Invalid API Key or Model access.' });
       }
     } else if (provider === 'openai') {
       const response = await fetch('https://api.openai.com/v1/models', {
@@ -76,24 +83,33 @@ app.post('/api/ai/chat', async (req, res) => {
     let responseText = '';
 
     if (provider === 'gemini') {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
-      });
+      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.0-pro', 'gemini-pro'];
 
-      const data = await response.json();
+      for (const model of modelsToTry) {
+        try {
+          console.log(`Trying model: ${model}`);
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+          });
 
-      if (!response.ok) {
-        console.error('Gemini API Error:', JSON.stringify(data, null, 2));
-        return res.status(response.status).json({ error: data.error?.message || 'Gemini API Error' });
+          const data = await response.json();
+
+          if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            responseText = data.candidates[0].content.parts[0].text;
+            break; // Success!
+          } else {
+            console.warn(`Model ${model} failed:`, data.error?.message);
+          }
+        } catch (e) {
+          console.error(`Error trying model ${model}:`, e);
+        }
       }
 
-      responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!responseText) {
-        console.error('Unexpected Gemini Response:', JSON.stringify(data, null, 2));
-        return res.status(500).json({ error: 'Unexpected response format from Gemini' });
+        return res.status(500).json({ error: 'All Gemini models failed. Please check your API Key.' });
       }
     } else if (provider === 'gpt') {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
