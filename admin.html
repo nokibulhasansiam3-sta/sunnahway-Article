@@ -1,339 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SunnahWay Articles Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap"
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@300;400;600;700&display=swap"
         rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4F46E5;
-            /* Indigo 600 */
-            --primary-hover: #4338CA;
-            /* Indigo 700 */
-            --secondary-color: #EC4899;
-            /* Pink 500 */
-            --bg-color: #F3F4F6;
-            /* Gray 100 */
-            --card-bg: #FFFFFF;
-            --text-primary: #111827;
-            /* Gray 900 */
-            --text-secondary: #6B7280;
-            /* Gray 500 */
-            --border-color: #E5E7EB;
-            /* Gray 200 */
-            --chat-width: 400px;
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
         body {
-            font-family: 'Hind Siliguri', 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 30px;
-            transition: all 0.3s ease;
-            background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
-            background-size: 20px 20px;
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
         }
 
-        /* Header */
-        .main-header {
-            background: var(--glass-bg);
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .main-header h2 {
-            font-weight: 700;
-            margin: 0;
-            color: var(--text-primary);
-            font-size: 1.75rem;
-            letter-spacing: -0.025em;
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        .main-header small {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-
-        /* Buttons */
-        .btn {
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-            border: none;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.3);
-        }
-
-        .btn-outline-secondary {
-            border-color: var(--border-color);
-            color: var(--text-secondary);
-            background: white;
-        }
-
-        .btn-outline-secondary:hover {
-            background: var(--bg-color);
-            color: var(--text-primary);
-            border-color: var(--text-secondary);
-        }
-
-        /* Category Grid */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .category-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 180px;
-        }
-
-        .category-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-color);
-        }
-
-        .category-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .category-card:hover::after {
-            opacity: 1;
-        }
-
-        .category-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            background: #EEF2FF;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-        }
-
-        .category-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .category-count {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* Article List */
-        .article-list-view {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .article-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .article-card:hover {
-            transform: translateX(5px);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-md);
-        }
-
-        .story-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .story-summary {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-        }
-
-        /* Editor View */
-        .editor-view {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 12px;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            background-color: #F9FAFB;
-            transition: all 0.2s;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            background-color: #FFFFFF;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-        }
-
-        .card {
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            color: var(--text-secondary);
-            font-weight: 600;
-            padding: 15px 25px;
-            border-bottom: 2px solid transparent;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background: transparent;
-        }
-
-        .nav-tabs .nav-link:hover {
-            color: var(--primary-color);
-            border-color: transparent;
-        }
-
-        /* AI Widget Styles */
-        .ai-fab {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
-            z-index: 2000;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .ai-fab:hover {
-            transform: scale(1.1) rotate(10deg);
-            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
-        }
-
-        .ai-widget {
-            position: fixed;
-            bottom: 120px;
-            right: 40px;
-            width: var(--chat-width);
-            height: 650px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            z-index: 1999;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .ai-widget.open {
-            display: flex;
-        }
-
-        .chat-messages {
-            background-color: #F9FAFB;
-        }
-
-        .message {
-            padding: 12px 18px;
-            border-radius: 18px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .message.user {
-            background: var(--primary-color);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.ai {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-bottom-left-radius: 4px;
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
         }
 
         @keyframes fadeIn {
@@ -347,142 +41,150 @@
                 transform: translateY(0);
             }
         }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
     </style>
 </head>
 
-<body>
-    <div class="container-fluid p-0">
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen text-white">
 
-        <!-- 1. Category View -->
-        <div id="categoryView">
-            <div class="main-header">
-                <div>
-                    <h2><i class="bi bi-grid-fill me-2"></i>Article Categories</h2>
-                    <small class="text-muted">Manage your article categories</small>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary" onclick="openSettings()">
-                        <i class="bi bi-gear"></i>
+    <!-- Header -->
+    <div class="sticky top-0 z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button id="backBtn" class="hidden bg-white/10 hover:bg-white/20 p-2 rounded-lg transition"
+                        onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i>
                     </button>
-                    <button class="btn btn-primary" onclick="openCategoryModal()">
-                        <i class="bi bi-plus-lg me-2"></i>New Category
+                    <div>
+                        <h1 class="text-2xl font-bold text-white" id="pageTitle">Article Categories</h1>
+                        <p class="text-sm text-gray-400" id="pageSubtitle">Manage your content</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative hidden" id="searchBox">
+                        <input type="text" id="searchInput" placeholder="Search..."
+                            class="bg-white/10 border border-white/20 rounded-lg px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button id="actionBtn"
+                        class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 px-6 py-2 rounded-lg font-semibold transition shadow-lg"
+                        onclick="primaryAction()">
+                        <i class="fas fa-plus mr-2"></i><span id="actionBtnText">New Category</span>
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div id="categoryList" class="category-grid">
-                <div class="text-center w-100 py-5">
-                    <div class="spinner-border text-primary" role="status"></div>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Category View -->
+        <div id="categoryView">
+            <div id="categoryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Loading -->
+                <div class="col-span-full flex justify-center py-20">
+                    <i class="fas fa-spinner fa-spin text-4xl text-emerald-500"></i>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Article List View -->
-        <div id="articleListView" class="article-list-view">
-            <div class="main-header">
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light border rounded-circle p-2" onclick="showCategoryView()">
-                        <i class="bi bi-arrow-left fs-5"></i>
-                    </button>
-                    <div>
-                        <h2 id="currentCategoryTitle">Category Name</h2>
-                        <small class="text-muted" id="articleCount">0 articles</small>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="createNewArticle()">
-                    <i class="bi bi-plus-lg me-2"></i>New Article
-                </button>
-            </div>
-
-            <div id="articleListContainer">
+        <!-- Article List View -->
+        <div id="articleView" class="hidden">
+            <div id="articleList" class="space-y-4">
                 <!-- Articles loaded here -->
             </div>
         </div>
 
-        <!-- 3. Editor View -->
-        <div id="editorView" class="editor-view">
-            <div class="main-header">
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light border rounded-circle p-2" onclick="showArticleListView()">
-                        <i class="bi bi-arrow-left fs-5"></i>
-                    </button>
-                    <div>
-                        <h2>Editor</h2>
-                        <small class="text-muted">Write your article in 3 languages</small>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <button id="deleteBtn" class="btn btn-outline-danger" onclick="deleteArticle()"
-                        style="display: none;">
-                        <i class="bi bi-trash"></i> Delete
-                    </button>
-                    <button class="btn btn-success" onclick="publishArticle()">
-                        <i class="bi bi-cloud-upload me-2"></i>Save & Publish
-                    </button>
-                </div>
-            </div>
-
-            <input type="hidden" id="articleId">
-            <input type="hidden" id="originalCategory">
-            <input type="hidden" id="editorCategory">
-
-            <!-- Title Inputs -->
-            <div class="card mb-4 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">Title (Bangla)</label>
-                            <input type="text" id="titleBn" class="form-control" placeholder="বাংলা শিরোনাম">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">Title (English)</label>
-                            <input type="text" id="titleEn" class="form-control" placeholder="English Title">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-bold text-muted">Title (Arabic)</label>
-                            <input type="text" id="titleAr" class="form-control" placeholder="العنوان" dir="rtl">
+        <!-- Editor View -->
+        <div id="editorView" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left: Form -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-heading text-emerald-400"></i> Titles
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">🇧🇩 Bangla</label>
+                                <input type="text" id="titleBn"
+                                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    placeholder="বাংলা শিরোনাম">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">🇺🇸 English</label>
+                                <input type="text" id="titleEn"
+                                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    placeholder="English Title">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">🇸🇦 Arabic</label>
+                                <input type="text" id="titleAr" dir="rtl"
+                                    class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    placeholder="العنوان">
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Editor Area -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light border-bottom-0">
-                    <ul class="nav nav-tabs card-header-tabs" id="langTabs" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" id="bn-tab" data-bs-toggle="tab"
-                                data-bs-target="#bn-content">🇧🇩 Bangla</button></li>
-                        <li class="nav-item"><button class="nav-link" id="en-tab" data-bs-toggle="tab"
-                                data-bs-target="#en-content">🇺🇸 English</button></li>
-                        <li class="nav-item"><button class="nav-link" id="ar-tab" data-bs-toggle="tab"
-                                data-bs-target="#ar-content">🇸🇦 Arabic</button></li>
-                    </ul>
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold flex items-center gap-2">
+                                <i class="fas fa-file-alt text-emerald-400"></i> Content
+                            </h3>
+                            <div class="flex gap-2 bg-white/5 p-1 rounded-lg">
+                                <button onclick="switchLang('bn')"
+                                    class="lang-tab px-4 py-2 rounded-md transition active" data-lang="bn">🇧🇩
+                                    BN</button>
+                                <button onclick="switchLang('en')" class="lang-tab px-4 py-2 rounded-md transition"
+                                    data-lang="en">🇺🇸 EN</button>
+                                <button onclick="switchLang('ar')" class="lang-tab px-4 py-2 rounded-md transition"
+                                    data-lang="ar">🇸🇦 AR</button>
+                            </div>
+                        </div>
+                        <textarea id="contentBn"
+                            class="lang-content w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[400px]"
+                            placeholder="এখানে লিখুন..."></textarea>
+                        <textarea id="contentEn"
+                            class="lang-content hidden w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[400px]"
+                            placeholder="Write here..."></textarea>
+                        <textarea id="contentAr" dir="rtl"
+                            class="lang-content hidden w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 min-h-[400px]"
+                            placeholder="اكتب هنا..."></textarea>
+                    </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="bn-content">
-                            <textarea id="contentBn" class="form-control border-0 p-4" rows="20"
-                                placeholder="এখানে লিখুন..."></textarea>
+
+                <!-- Right: Actions & Preview -->
+                <div class="space-y-6">
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Actions</h3>
+                        <div class="space-y-3">
+                            <button onclick="saveArticle()"
+                                class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 px-4 py-3 rounded-lg font-semibold transition shadow-lg">
+                                <i class="fas fa-save mr-2"></i> Save & Publish
+                            </button>
+                            <button id="deleteArticleBtn" onclick="deleteArticle()"
+                                class="hidden w-full bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 px-4 py-3 rounded-lg font-semibold transition">
+                                <i class="fas fa-trash mr-2"></i> Delete Article
+                            </button>
                         </div>
-                        <div class="tab-pane fade" id="en-content">
-                            <textarea id="contentEn" class="form-control border-0 p-4" rows="20"
-                                placeholder="Write content here..."></textarea>
-                        </div>
-                        <div class="tab-pane fade" id="ar-content">
-                            <textarea id="contentAr" class="form-control border-0 p-4" rows="20"
-                                placeholder="اكتب المحتوى هنا..." dir="rtl"></textarea>
+                    </div>
+
+                    <div class="glass rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-4">Info</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Article ID:</span>
+                                <span id="articleIdDisplay" class="font-mono">New</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Category:</span>
+                                <span id="categoryDisplay">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Status:</span>
+                                <span class="text-emerald-400">Draft</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -491,190 +193,153 @@
 
     </div>
 
-    <!-- AI Floating Button -->
-    <button class="ai-fab" onclick="toggleAIWidget()">
-        <i class="bi bi-stars"></i>
-    </button>
+    <!-- Hidden Fields -->
+    <input type="hidden" id="currentCategoryId">
+    <input type="hidden" id="currentArticleId">
 
-    <!-- AI Widget -->
-    <div class="ai-widget" id="aiWidget">
-        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-robot text-primary fs-5"></i>
-                <select id="aiModel" class="form-select form-select-sm border-0 bg-transparent fw-bold"
-                    style="width: auto;">
-                    <option value="gemini-2.0-flash">⚡ Gemini 2.0 Flash</option>
-                    <option value="gpt-4o">🤖 GPT-4o</option>
-                </select>
-            </div>
-            <button class="btn-close" onclick="toggleAIWidget()"></button>
-        </div>
-        <div class="chat-messages" id="chatHistory">
-            <div class="message ai">Hello! I can help you write articles.</div>
-        </div>
-        <div class="p-3 border-top bg-light">
-            <div class="input-group">
-                <input type="text" id="chatInput" class="form-control" placeholder="Ask AI..."
-                    onkeypress="if(event.key==='Enter') sendChat()">
-                <button class="btn btn-primary" onclick="sendChat()"><i class="bi bi-send"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Category Modal -->
-    <div class="modal fade" id="categoryModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Category</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-12"><input type="text" id="newCatId" class="form-control"
-                                placeholder="ID (e.g. history)"></div>
-                        <div class="col-12"><input type="text" id="newCatBn" class="form-control"
-                                placeholder="Bangla Name"></div>
-                        <div class="col-12"><input type="text" id="newCatEn" class="form-control"
-                                placeholder="English Name"></div>
-                        <div class="col-12"><input type="text" id="newCatAr" class="form-control"
-                                placeholder="Arabic Name" dir="rtl"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary w-100" onclick="addCategory()">Create Category</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">API Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Gemini API Key</label>
-                        <input type="password" id="geminiKey" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">OpenAI API Key</label>
-                        <input type="password" id="openaiKey" class="form-control">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         let categories = [];
-        let currentCategory = null;
         let currentArticles = [];
+        let currentView = 'category';
 
-        // --- Init ---
-        window.onload = async () => {
-            await loadCategories();
-            loadSettings();
+        // Initialize
+        window.onload = () => {
+            loadCategories();
         };
 
-        // --- Navigation ---
-        function showCategoryView() {
-            document.getElementById('articleListView').style.display = 'none';
-            document.getElementById('editorView').style.display = 'none';
-            document.getElementById('categoryView').style.display = 'block';
-            currentCategory = null;
+        // Navigation
+        function goBack() {
+            if (currentView === 'article') {
+                showCategoryView();
+            } else if (currentView === 'editor') {
+                showArticleView();
+            }
         }
 
-        function showArticleListView() {
-            document.getElementById('categoryView').style.display = 'none';
-            document.getElementById('editorView').style.display = 'none';
-            document.getElementById('articleListView').classList.add('active');
-            document.getElementById('articleListView').style.display = 'block';
+        function showCategoryView() {
+            currentView = 'category';
+            document.getElementById('categoryView').classList.remove('hidden');
+            document.getElementById('articleView').classList.add('hidden');
+            document.getElementById('editorView').classList.add('hidden');
+            document.getElementById('backBtn').classList.add('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('pageTitle').textContent = 'Article Categories';
+            document.getElementById('pageSubtitle').textContent = 'Manage your content';
+            document.getElementById('actionBtnText').textContent = 'New Category';
+        }
+
+        function showArticleView() {
+            currentView = 'article';
+            document.getElementById('categoryView').classList.add('hidden');
+            document.getElementById('articleView').classList.remove('hidden');
+            document.getElementById('editorView').classList.add('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('searchBox').classList.remove('hidden');
+            document.getElementById('actionBtnText').textContent = 'New Article';
         }
 
         function showEditorView() {
-            document.getElementById('categoryView').style.display = 'none';
-            document.getElementById('articleListView').style.display = 'none';
-            document.getElementById('editorView').classList.add('active');
-            document.getElementById('editorView').style.display = 'block';
+            currentView = 'editor';
+            document.getElementById('categoryView').classList.add('hidden');
+            document.getElementById('articleView').classList.add('hidden');
+            document.getElementById('editorView').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('searchBox').classList.add('hidden');
+            document.getElementById('pageTitle').textContent = 'Article Editor';
+            document.getElementById('pageSubtitle').textContent = 'Write in 3 languages';
         }
 
-        // --- Categories ---
+        function primaryAction() {
+            if (currentView === 'category') {
+                createCategory();
+            } else if (currentView === 'article') {
+                createNewArticle();
+            }
+        }
+
+        // Categories
         async function loadCategories() {
             try {
                 const res = await fetch('/api/categories');
                 categories = await res.json();
                 displayCategories();
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', 'Failed to load categories', 'error');
+            }
         }
 
         function displayCategories() {
-            const list = document.getElementById('categoryList');
+            const grid = document.getElementById('categoryGrid');
             if (categories.length === 0) {
-                list.innerHTML = '<div class="text-center text-muted w-100 py-5">No categories found.</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-400">No categories found. Create one!</div>';
                 return;
             }
 
-            list.innerHTML = categories.map(cat => `
-                <div class="category-card" onclick="loadArticles('${cat.id}', '${cat.titleEn}')">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="category-icon"><i class="bi bi-folder-fill"></i></div>
-                            <div class="category-title">${cat.titleEn}</div>
-                            <div class="category-count">${cat.titleBn}</div>
+            grid.innerHTML = categories.map(cat => `
+                <div class="glass rounded-2xl p-6 card-hover transition cursor-pointer fade-in" onclick="loadArticles('${cat.id}', '${cat.titleEn}')">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-emerald-500/20 p-3 rounded-xl">
+                            <i class="fas fa-folder text-emerald-400 text-2xl"></i>
                         </div>
-                        <div class="dropdown" onclick="event.stopPropagation()">
-                            <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteCategory('${cat.id}')"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                            </ul>
-                        </div>
+                        <button onclick="event.stopPropagation(); deleteCategory('${cat.id}')" class="text-gray-400 hover:text-red-400 transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">${cat.titleEn}</h3>
+                    <p class="text-gray-400 text-sm">${cat.titleBn}</p>
+                    <div class="mt-4 pt-4 border-t border-white/10">
+                        <span class="text-xs text-gray-500">ID: ${cat.id}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        async function addCategory() {
-            const id = document.getElementById('newCatId').value.trim();
-            const titleBn = document.getElementById('newCatBn').value.trim();
-            const titleEn = document.getElementById('newCatEn').value.trim();
-            const titleAr = document.getElementById('newCatAr').value.trim();
+        async function createCategory() {
+            const { value: formValues } = await Swal.fire({
+                title: 'New Category',
+                html: `
+                    <input id="catId" class="swal2-input" placeholder="ID (e.g. aqeedah)">
+                    <input id="catBn" class="swal2-input" placeholder="Bangla Name">
+                    <input id="catEn" class="swal2-input" placeholder="English Name">
+                    <input id="catAr" class="swal2-input" placeholder="Arabic Name">
+                `,
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                    return {
+                        id: document.getElementById('catId').value,
+                        titleBn: document.getElementById('catBn').value,
+                        titleEn: document.getElementById('catEn').value,
+                        titleAr: document.getElementById('catAr').value
+                    };
+                }
+            });
 
-            if (!id || !titleBn || !titleEn) return Swal.fire('Error', 'Fields required', 'error');
-
-            try {
-                await fetch('/api/categories', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, titleBn, titleEn, titleAr })
-                });
-                await fetch('/api/push', { method: 'POST' });
-
-                bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
-                loadCategories();
-                Swal.fire('Success', 'Category added', 'success');
-            } catch (e) { Swal.fire('Error', e.message, 'error'); }
+            if (formValues && formValues.id && formValues.titleEn) {
+                try {
+                    await fetch('/api/categories', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formValues)
+                    });
+                    await fetch('/api/push', { method: 'POST' });
+                    Swal.fire('Success!', 'Category created', 'success');
+                    loadCategories();
+                } catch (e) {
+                    Swal.fire('Error', e.message, 'error');
+                }
+            }
         }
 
         async function deleteCategory(id) {
             const result = await Swal.fire({
                 title: 'Delete Category?',
-                text: "This will delete the category and its data file.",
+                text: 'This will delete the category and all its articles!',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
+                confirmButtonColor: '#ef4444',
                 confirmButtonText: 'Yes, delete it'
             });
 
@@ -686,74 +351,94 @@
                         body: JSON.stringify({ id })
                     });
                     await fetch('/api/push', { method: 'POST' });
+                    Swal.fire('Deleted!', 'Category deleted', 'success');
                     loadCategories();
-                    Swal.fire('Deleted', 'Category deleted', 'success');
-                } catch (e) { Swal.fire('Error', e.message, 'error'); }
+                } catch (e) {
+                    Swal.fire('Error', e.message, 'error');
+                }
             }
         }
 
-        // --- Articles ---
+        // Articles
         async function loadArticles(categoryId, categoryTitle) {
-            currentCategory = { id: categoryId, title: categoryTitle };
-            document.getElementById('currentCategoryTitle').textContent = categoryTitle;
+            document.getElementById('currentCategoryId').value = categoryId;
+            document.getElementById('pageTitle').textContent = categoryTitle;
+            document.getElementById('pageSubtitle').textContent = `Articles in ${categoryTitle}`;
+            document.getElementById('categoryDisplay').textContent = categoryTitle;
 
-            showArticleListView();
-            document.getElementById('articleListContainer').innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+            showArticleView();
+            document.getElementById('articleList').innerHTML = '<div class="text-center py-20"><i class="fas fa-spinner fa-spin text-4xl text-emerald-500"></i></div>';
 
             try {
                 const res = await fetch(`/api/articles/${categoryId}`);
                 currentArticles = await res.json();
-                document.getElementById('articleCount').textContent = `${currentArticles.length} articles`;
                 displayArticles();
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                Swal.fire('Error', 'Failed to load articles', 'error');
+            }
         }
 
         function displayArticles() {
-            const container = document.getElementById('articleListContainer');
+            const list = document.getElementById('articleList');
             if (currentArticles.length === 0) {
-                container.innerHTML = '<div class="text-center py-5 text-muted">No articles yet. Create one!</div>';
+                list.innerHTML = '<div class="text-center py-20 text-gray-400">No articles yet. Create one!</div>';
                 return;
             }
 
-            container.innerHTML = currentArticles.map(article => `
-                <div class="article-card" onclick='editArticle(${JSON.stringify(article).replace(/'/g, "&apos;")})'>
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h5 class="story-title">${article.titleEn || 'No Title'}</h5>
-                            <p class="story-summary">${article.titleBn || ''}</p>
-                            <small class="text-muted"><i class="bi bi-hash me-1"></i>${article.id}</small>
+            list.innerHTML = currentArticles.map(article => `
+                <div class="glass rounded-xl p-6 card-hover transition cursor-pointer fade-in" onclick='editArticle(${JSON.stringify(article).replace(/'/g, "&#39;")})'>
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-2">${article.titleEn || 'Untitled'}</h3>
+                            <p class="text-gray-400 text-sm mb-3">${article.titleBn || ''}</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span><i class="fas fa-hashtag mr-1"></i>${article.id}</span>
+                                <span><i class="fas fa-language mr-1"></i>3 Languages</span>
+                            </div>
                         </div>
-                        <i class="bi bi-chevron-right text-muted"></i>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); editArticle(${JSON.stringify(article).replace(/'/g, '&#39;')})" class="text-emerald-400 hover:text-emerald-300 transition">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteArticleConfirm('${article.id}')" class="text-red-400 hover:text-red-300 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
         function createNewArticle() {
-            document.getElementById('articleId').value = '';
-            document.getElementById('originalCategory').value = '';
-            document.getElementById('editorCategory').value = currentCategory.id;
-
-            ['titleBn', 'titleEn', 'titleAr', 'contentBn', 'contentEn', 'contentAr'].forEach(id => document.getElementById(id).value = '');
-
-            document.getElementById('deleteBtn').style.display = 'none';
+            document.getElementById('currentArticleId').value = '';
+            document.getElementById('titleBn').value = '';
+            document.getElementById('titleEn').value = '';
+            document.getElementById('titleAr').value = '';
+            document.getElementById('contentBn').value = '';
+            document.getElementById('contentEn').value = '';
+            document.getElementById('contentAr').value = '';
+            document.getElementById('articleIdDisplay').textContent = 'New';
+            document.getElementById('deleteArticleBtn').classList.add('hidden');
             showEditorView();
         }
 
         function editArticle(article) {
-            document.getElementById('articleId').value = article.id;
-            document.getElementById('originalCategory').value = currentCategory.id;
-            document.getElementById('editorCategory').value = currentCategory.id;
-
-            ['titleBn', 'titleEn', 'titleAr', 'contentBn', 'contentEn', 'contentAr'].forEach(id => document.getElementById(id).value = article[id] || '');
-
-            document.getElementById('deleteBtn').style.display = 'block';
+            document.getElementById('currentArticleId').value = article.id;
+            document.getElementById('titleBn').value = article.titleBn || '';
+            document.getElementById('titleEn').value = article.titleEn || '';
+            document.getElementById('titleAr').value = article.titleAr || '';
+            document.getElementById('contentBn').value = article.contentBn || '';
+            document.getElementById('contentEn').value = article.contentEn || '';
+            document.getElementById('contentAr').value = article.contentAr || '';
+            document.getElementById('articleIdDisplay').textContent = article.id;
+            document.getElementById('deleteArticleBtn').classList.remove('hidden');
             showEditorView();
         }
 
-        async function publishArticle() {
-            const categoryId = document.getElementById('editorCategory').value;
-            const articleId = document.getElementById('articleId').value || `${categoryId}-${Date.now()}`;
+        async function saveArticle() {
+            const categoryId = document.getElementById('currentCategoryId').value;
+            const articleId = document.getElementById('currentArticleId').value || `${categoryId}-${Date.now()}`;
 
             const article = {
                 id: articleId,
@@ -766,7 +451,10 @@
                 contentAr: document.getElementById('contentAr').value
             };
 
-            if (!article.titleEn) return Swal.fire('Error', 'English Title is required', 'error');
+            if (!article.titleEn) {
+                Swal.fire('Error', 'English title is required', 'error');
+                return;
+            }
 
             try {
                 Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading() });
@@ -778,137 +466,108 @@
                 });
                 await fetch('/api/push', { method: 'POST' });
 
-                Swal.fire('Saved', 'Article saved and pushed to GitHub', 'success');
-                loadArticles(categoryId, currentCategory.title);
-            } catch (e) { Swal.fire('Error', e.message, 'error'); }
+                Swal.fire('Success!', 'Article saved and published', 'success');
+                loadArticles(categoryId, document.getElementById('pageTitle').textContent);
+            } catch (e) {
+                Swal.fire('Error', e.message, 'error');
+            }
         }
 
-        async function deleteArticle() {
-            const id = document.getElementById('articleId').value;
-            const category = document.getElementById('editorCategory').value;
-
+        async function deleteArticleConfirm(id) {
             const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Delete this article?",
+                title: 'Delete Article?',
+                text: 'This action cannot be undone!',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
+                confirmButtonColor: '#ef4444',
                 confirmButtonText: 'Yes, delete it'
             });
 
             if (result.isConfirmed) {
-                try {
-                    await fetch('/api/delete', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ category, id })
-                    });
-                    await fetch('/api/push', { method: 'POST' });
-
-                    Swal.fire('Deleted', 'Article deleted', 'success');
-                    loadArticles(category, currentCategory.title);
-                } catch (e) { Swal.fire('Error', e.message, 'error'); }
+                await deleteArticleById(id);
             }
         }
 
-        // --- Settings & AI ---
-        function openSettings() { new bootstrap.Modal(document.getElementById('settingsModal')).show(); }
-        function openCategoryModal() { new bootstrap.Modal(document.getElementById('categoryModal')).show(); }
-        function toggleAIWidget() { document.getElementById('aiWidget').classList.toggle('open'); }
-
-        function loadSettings() {
-            document.getElementById('geminiKey').value = localStorage.getItem('gemini_api_key') || '';
-            document.getElementById('openaiKey').value = localStorage.getItem('openai_api_key') || '';
+        async function deleteArticle() {
+            const id = document.getElementById('currentArticleId').value;
+            await deleteArticleConfirm(id);
         }
 
-        function saveSettings() {
-            localStorage.setItem('gemini_api_key', document.getElementById('geminiKey').value);
-            localStorage.setItem('openai_api_key', document.getElementById('openaiKey').value);
-            bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
-            Swal.fire('Saved', 'API Keys saved', 'success');
-        }
-
-        // Basic AI Chat (Simplified for brevity)
-        async function sendChat() {
-            const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            const history = document.getElementById('chatHistory');
-            history.innerHTML += `<div class="message user">${msg}</div>`;
-            input.value = '';
+        async function deleteArticleById(id) {
+            const categoryId = document.getElementById('currentCategoryId').value;
 
             try {
-                const response = await callAI(msg);
-                history.innerHTML += `<div class="message ai">${response.replace(/\n/g, '<br>')}</div>`;
+                Swal.fire({ title: 'Deleting...', didOpen: () => Swal.showLoading() });
+
+                await fetch('/api/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: categoryId, id })
+                });
+                await fetch('/api/push', { method: 'POST' });
+
+                Swal.fire('Deleted!', 'Article deleted', 'success');
+                loadArticles(categoryId, document.getElementById('pageTitle').textContent);
             } catch (e) {
-                history.innerHTML += `<div class="message ai text-danger">Error: ${e.message}</div>`;
-            }
-            history.scrollTop = history.scrollHeight;
-        }
-
-        async function runAgent() {
-            const topic = document.getElementById('agentTopic').value;
-            if (!topic) { Swal.fire('Topic Required', 'Please enter a topic first.', 'warning'); return; }
-
-            const status = document.getElementById('agentStatus');
-            status.innerHTML = '<div class="spinner-border spinner-border-sm text-primary"></div> Writing article... This may take a few seconds.';
-
-            const prompt = `You are an expert Islamic scholar. Write a comprehensive article about: "${topic}".
-            IMPORTANT: You must return ONLY a valid JSON object. Do not add any markdown formatting like \`\`\`json or \`\`\`.
-            The JSON structure must be exactly this:
-            {
-                "titleBn": "Title in Bangla",
-                "titleEn": "Title in English",
-                "titleAr": "Title in Arabic",
-                "contentBn": "Full content in Bangla (use Markdown for headings, lists, bold)",
-                "contentEn": "Full content in English (use Markdown)",
-                "contentAr": "Full content in Arabic (use Markdown)"
-            }`;
-
-            try {
-                console.log('Sending request to AI...');
-                let text = await callAI(prompt, true);
-                console.log('Raw AI Response:', text);
-
-                // Robust JSON extraction: Find the first '{' and last '}'
-                const jsonStart = text.indexOf('{');
-                const jsonEnd = text.lastIndexOf('}');
-
-                if (jsonStart === -1 || jsonEnd === -1) {
-                    throw new Error('AI did not return valid JSON. Check console for raw output.');
-                }
-
-                const jsonStr = text.substring(jsonStart, jsonEnd + 1);
-                const result = JSON.parse(jsonStr);
-
-                // Populate fields safely
-                if (result.titleBn) document.getElementById('titleBn').value = result.titleBn;
-                if (result.titleEn) document.getElementById('titleEn').value = result.titleEn;
-                if (result.titleAr) document.getElementById('titleAr').value = result.titleAr;
-                if (result.contentBn) document.getElementById('contentBn').value = result.contentBn;
-                if (result.contentEn) document.getElementById('contentEn').value = result.contentEn;
-                if (result.contentAr) document.getElementById('contentAr').value = result.contentAr;
-
-                status.innerHTML = '<span class="text-success fw-bold"><i class="bi bi-check-circle"></i> Done! Article populated.</span>';
-
-                // Close widget after a short delay
-                setTimeout(() => {
-                    toggleAIWidget();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Article Generated!',
-                        text: 'Review the content in the editor.',
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }, 1000);
-
-            } catch (e) {
-                console.error('Agent Error:', e);
-                status.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Error: ${e.message}</span>`;
+                Swal.fire('Error', e.message, 'error');
             }
         }
+
+        // Language Tabs
+        function switchLang(lang) {
+            document.querySelectorAll('.lang-tab').forEach(tab => {
+                tab.classList.remove('active', 'bg-emerald-500', 'text-white');
+                tab.classList.add('text-gray-400');
+            });
+            document.querySelectorAll('.lang-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            const activeTab = document.querySelector(`[data-lang="${lang}"]`);
+            activeTab.classList.add('active', 'bg-emerald-500', 'text-white');
+            activeTab.classList.remove('text-gray-400');
+
+            document.getElementById(`content${lang.charAt(0).toUpperCase() + lang.slice(1)}`).classList.remove('hidden');
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = currentArticles.filter(article =>
+                article.titleEn?.toLowerCase().includes(query) ||
+                article.titleBn?.toLowerCase().includes(query) ||
+                article.id?.toLowerCase().includes(query)
+            );
+
+            const list = document.getElementById('articleList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="text-center py-20 text-gray-400">No articles found</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(article => `
+                <div class="glass rounded-xl p-6 card-hover transition cursor-pointer fade-in" onclick='editArticle(${JSON.stringify(article).replace(/'/g, "&#39;")})'>
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-2">${article.titleEn || 'Untitled'}</h3>
+                            <p class="text-gray-400 text-sm mb-3">${article.titleBn || ''}</p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <span><i class="fas fa-hashtag mr-1"></i>${article.id}</span>
+                                <span><i class="fas fa-language mr-1"></i>3 Languages</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); editArticle(${JSON.stringify(article).replace(/'/g, '&#39;')})" class="text-emerald-400 hover:text-emerald-300 transition">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteArticleConfirm('${article.id}')" class="text-red-400 hover:text-red-300 transition">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        });
     </script>
 </body>
 
