@@ -199,11 +199,124 @@
 
     </div>
 
+    <!-- AI Floating Button -->
+    <button onclick="toggleAIWidget()"
+        class="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl hover:scale-110 transition z-50 animate-bounce">
+        <i class="fas fa-robot"></i>
+    </button>
+
+    <!-- AI Widget -->
+    <div id="aiWidget"
+        class="fixed bottom-28 right-8 w-96 h-[600px] glass rounded-2xl shadow-2xl flex flex-col hidden z-50 transform transition-all duration-300 origin-bottom-right scale-0 opacity-0">
+        <!-- Header -->
+        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5 rounded-t-2xl">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-robot text-indigo-400"></i>
+                <span class="font-bold">AI Assistant</span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="openSettings()" class="text-gray-400 hover:text-white transition"><i
+                        class="fas fa-cog"></i></button>
+                <button onclick="toggleAIWidget()" class="text-gray-400 hover:text-white transition"><i
+                        class="fas fa-times"></i></button>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chatHistory" class="flex-1 p-4 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-white/10">
+            <div class="flex gap-3">
+                <div
+                    class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                    <i class="fas fa-robot text-xs"></i>
+                </div>
+                <div class="bg-white/5 p-3 rounded-2xl rounded-tl-none text-sm text-gray-200">
+                    Hello! I can help you write articles, translate content, or generate ideas. Configure your API key
+                    in settings first! 🚀
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 border-t border-white/10 bg-white/5 rounded-b-2xl">
+            <div class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Ask AI..."
+                    class="flex-1 bg-black/20 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                    onkeypress="if(event.key==='Enter') sendChat()">
+                <button onclick="sendChat()"
+                    class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 rounded-lg transition">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="flex justify-between mt-2 text-xs text-gray-500">
+                <select id="aiModel" class="bg-transparent border-none focus:ring-0 cursor-pointer hover:text-gray-300">
+                    <option value="gemini">⚡ Gemini Pro</option>
+                    <option value="gpt">🤖 GPT-4o</option>
+                    <option value="deepseek">🧠 DeepSeek</option>
+                </select>
+                <button onclick="clearChat()" class="hover:text-red-400">Clear Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal"
+        class="fixed inset-0 bg-black/80 hidden z-[60] flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl transform transition-all scale-95 opacity-0"
+            id="settingsModalContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fas fa-cog text-emerald-400"></i> Settings
+                </h3>
+                <button onclick="closeSettings()" class="text-gray-400 hover:text-white"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Gemini API Key</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="geminiKey"
+                            class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                        <button onclick="testApi('gemini')"
+                            class="bg-white/5 hover:bg-white/10 text-emerald-400 px-3 rounded-lg text-sm border border-white/10">Test</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">OpenAI API Key</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="openaiKey"
+                            class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                        <button onclick="testApi('openai')"
+                            class="bg-white/5 hover:bg-white/10 text-emerald-400 px-3 rounded-lg text-sm border border-white/10">Test</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">DeepSeek API Key</label>
+                    <div class="flex gap-2">
+                        <input type="password" id="deepseekKey"
+                            class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                        <button onclick="testApi('deepseek')"
+                            class="bg-white/5 hover:bg-white/10 text-emerald-400 px-3 rounded-lg text-sm border border-white/10">Test</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3">
+                <button onclick="closeSettings()"
+                    class="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/5 transition">Cancel</button>
+                <button onclick="saveSettings()"
+                    class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition shadow-lg shadow-emerald-500/20">Save
+                    Settings</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden Fields -->
     <input type="hidden" id="currentCategoryId">
     <input type="hidden" id="currentArticleId">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         let categories = [];
         let currentArticles = [];
@@ -595,6 +708,192 @@
                 console.error(e);
                 Swal.fire('Error', 'Translation failed', 'error');
             }
+        }
+
+        // --- AI & Settings ---
+        function toggleAIWidget() {
+            const widget = document.getElementById('aiWidget');
+            if (widget.classList.contains('hidden')) {
+                widget.classList.remove('hidden');
+                setTimeout(() => {
+                    widget.classList.remove('scale-0', 'opacity-0');
+                    widget.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            } else {
+                widget.classList.remove('scale-100', 'opacity-100');
+                widget.classList.add('scale-0', 'opacity-0');
+                setTimeout(() => widget.classList.add('hidden'), 300);
+            }
+        }
+
+        function openSettings() {
+            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+            document.getElementById('openaiKey').value = localStorage.getItem('openaiKey') || '';
+            document.getElementById('deepseekKey').value = localStorage.getItem('deepseekKey') || '';
+
+            const modal = document.getElementById('settingsModal');
+            const content = document.getElementById('settingsModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            const content = document.getElementById('settingsModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function saveSettings() {
+            localStorage.setItem('geminiKey', document.getElementById('geminiKey').value);
+            localStorage.setItem('openaiKey', document.getElementById('openaiKey').value);
+            localStorage.setItem('deepseekKey', document.getElementById('deepseekKey').value);
+            closeSettings();
+            Swal.fire('Saved', 'API Keys saved successfully', 'success');
+        }
+
+        async function testApi(provider) {
+            const key = document.getElementById(`${provider}Key`).value;
+            if (!key) return Swal.fire('Error', 'Please enter an API key', 'error');
+
+            Swal.fire({ title: 'Testing...', didOpen: () => Swal.showLoading() });
+
+            try {
+                let success = false;
+                if (provider === 'gemini') {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
+                    });
+                    success = res.ok;
+                } else if (provider === 'openai') {
+                    const res = await fetch('https://api.openai.com/v1/models', {
+                        headers: { 'Authorization': `Bearer ${key}` }
+                    });
+                    success = res.ok;
+                } else if (provider === 'deepseek') {
+                    // DeepSeek API test (assuming similar to OpenAI structure)
+                    const res = await fetch('https://api.deepseek.com/v1/models', {
+                        headers: { 'Authorization': `Bearer ${key}` }
+                    });
+                    success = res.ok;
+                }
+
+                if (success) Swal.fire('Success', 'API Key is valid!', 'success');
+                else Swal.fire('Error', 'Invalid API Key', 'error');
+            } catch (e) {
+                Swal.fire('Error', e.message, 'error');
+            }
+        }
+
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add User Message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Get Config
+            const model = document.getElementById('aiModel').value;
+            const key = localStorage.getItem(`${model}Key`);
+
+            if (!key) {
+                addMessage('Please configure your API key in settings first.', 'ai');
+                return;
+            }
+
+            // Show Typing
+            const typingId = addMessage('<i class="fas fa-circle-notch fa-spin"></i> Thinking...', 'ai');
+
+            try {
+                let responseText = '';
+
+                if (model === 'gemini') {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+                    });
+                    const data = await res.json();
+                    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Error generating response';
+                }
+                else if (model === 'gpt') {
+                    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${key}`
+                        },
+                        body: JSON.stringify({
+                            model: "gpt-4o",
+                            messages: [{ role: "user", content: message }]
+                        })
+                    });
+                    const data = await res.json();
+                    responseText = data.choices?.[0]?.message?.content || 'Error generating response';
+                }
+                else if (model === 'deepseek') {
+                    const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${key}`
+                        },
+                        body: JSON.stringify({
+                            model: "deepseek-chat",
+                            messages: [{ role: "user", content: message }]
+                        })
+                    });
+                    const data = await res.json();
+                    responseText = data.choices?.[0]?.message?.content || 'Error generating response';
+                }
+
+                // Update Message
+                document.getElementById(typingId).innerHTML = marked.parse(responseText);
+            } catch (e) {
+                document.getElementById(typingId).innerHTML = 'Error: ' + e.message;
+            }
+        }
+
+        function addMessage(text, sender) {
+            const history = document.getElementById('chatHistory');
+            const id = 'msg-' + Date.now();
+            const isAi = sender === 'ai';
+
+            const html = `
+                <div class="flex gap-3 ${!isAi ? 'flex-row-reverse' : ''}" id="${id}">
+                    <div class="w-8 h-8 rounded-full ${isAi ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400'} flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${isAi ? 'fa-robot' : 'fa-user'} text-xs"></i>
+                    </div>
+                    <div class="${isAi ? 'bg-white/5 text-gray-200' : 'bg-emerald-500/20 text-white'} p-3 rounded-2xl ${isAi ? 'rounded-tl-none' : 'rounded-tr-none'} text-sm max-w-[80%]">
+                        ${text}
+                    </div>
+                </div>
+            `;
+
+            history.insertAdjacentHTML('beforeend', html);
+            history.scrollTop = history.scrollHeight;
+            return id;
+        }
+
+        function clearChat() {
+            document.getElementById('chatHistory').innerHTML = `
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                        <i class="fas fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-white/5 p-3 rounded-2xl rounded-tl-none text-sm text-gray-200">
+                        Chat cleared. How can I help?
+                    </div>
+                </div>
+            `;
         }
 
         // Search
