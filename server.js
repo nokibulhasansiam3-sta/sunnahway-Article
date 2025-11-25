@@ -38,7 +38,16 @@ app.post('/api/ai/test', async (req, res) => {
   try {
     let success = false;
     if (provider === 'gemini') {
-      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.0-pro', 'gemini-pro'];
+      const modelsToTry = [
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-001',
+        'gemini-1.5-flash-latest',
+        'gemini-1.5-pro',
+        'gemini-1.0-pro',
+        'gemini-pro'
+      ];
+      let lastError = null;
+
       for (const model of modelsToTry) {
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
@@ -49,12 +58,37 @@ app.post('/api/ai/test', async (req, res) => {
           if (response.ok) {
             success = true;
             break;
+          } else {
+            const data = await response.json();
+            lastError = data.error?.message;
           }
-        } catch (e) { }
+        } catch (e) {
+          lastError = e.message;
+        }
       }
 
       if (!success) {
-        return res.status(400).json({ error: 'All Gemini models failed. Invalid API Key or Model access.' });
+        return res.status(400).json({ error: `All Gemini models failed. Last Error: ${lastError}` });
+      }
+    } else if (provider === 'claude') {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 10,
+          messages: [{ role: "user", content: "Hello" }]
+        })
+      });
+      success = response.ok;
+      if (!success) {
+        const data = await response.json();
+        console.error('Claude Test Error:', JSON.stringify(data, null, 2));
+        return res.status(400).json({ error: data.error?.message || 'Claude API Error' });
       }
     } else if (provider === 'openai') {
       const response = await fetch('https://api.openai.com/v1/models', {
@@ -76,6 +110,44 @@ app.post('/api/ai/test', async (req, res) => {
   }
 });
 
+// Ollama Proxy Endpoint
+app.post('/api/ai/ollama', async (req, res) => {
+  try {
+    const response = await fetch('http://127.0.0.1:11434/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
+
+    if (req.body.stream) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
+      // Node.js friendly streaming
+      if (response.body.pipe) {
+        response.body.pipe(res);
+      } else {
+        // Fallback for Web Streams in Node
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          res.write(decoder.decode(value));
+        }
+        res.end();
+      }
+    } else {
+      const data = await response.json();
+      res.json(data);
+    }
+  } catch (error) {
+    console.error('Ollama Error:', error);
+    res.status(500).json({ error: 'Ollama failed: ' + error.message });
+  }
+});
+
 app.post('/api/ai/chat', async (req, res) => {
   const { provider, key, message } = req.body;
 
@@ -83,7 +155,17 @@ app.post('/api/ai/chat', async (req, res) => {
     let responseText = '';
 
     if (provider === 'gemini') {
-      const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.0-pro', 'gemini-pro'];
+      const modelsToTry = [
+        'gemini-1.5-flash',
+        'gemini-1.5-flash-001',
+        'gemini-1.5-flash-latest',
+        'gemini-1.5-pro',
+        'gemini-1.5-pro-latest',
+        'gemini-1.0-pro',
+        'gemini-pro'
+      ];
+
+      let lastError = null;
 
       for (const model of modelsToTry) {
         try {
@@ -101,16 +183,44 @@ app.post('/api/ai/chat', async (req, res) => {
             responseText = data.candidates[0].content.parts[0].text;
             break; // Success!
           } else {
-            console.warn(`Model ${model} failed:`, data.error?.message);
+            console.warn(`Model ${model} failed:`, JSON.stringify(data.error, null, 2));
+            lastError = data.error?.message || data.error?.status || 'Unknown Error';
           }
         } catch (e) {
           console.error(`Error trying model ${model}:`, e);
+          lastError = e.message;
         }
       }
 
       if (!responseText) {
-        return res.status(500).json({ error: 'All Gemini models failed. Please check your API Key.' });
+        return res.status(500).json({
+          error: `All Gemini models failed. Last Error: ${lastError}`,
+          details: lastError
+        });
       }
+    } else if (provider === 'claude') {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: "claude-3-5-sonnet-20240620",
+          max_tokens: 1024,
+          messages: [{ role: "user", content: message }]
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error('Claude API Error:', JSON.stringify(data, null, 2));
+        return res.status(response.status).json({ error: data.error?.message || 'Claude API Error' });
+      }
+
+      responseText = data.content?.[0]?.text;
     } else if (provider === 'gpt') {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -325,7 +435,7 @@ app.post('/api/delete', async (req, res) => {
 
 // Push to GitHub
 app.post('/api/push', (req, res) => {
-  exec('git add . && git commit -m "New article added via Admin Panel" && git push', (error, stdout, stderr) => {
+  exec('git add data/ && git commit -m "Updated articles via Admin Panel" && git push', (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return res.status(500).json({ success: false, message: stderr });

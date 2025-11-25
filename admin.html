@@ -102,8 +102,25 @@
                 <!-- Left: Form -->
                 <div class="lg:col-span-2 space-y-6">
                     <div class="glass rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <i class="fas fa-heading text-emerald-400"></i> Titles
+                        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 justify-between flex-wrap">
+                            <span><i class="fas fa-heading text-emerald-400"></i> Titles</span>
+                            <div class="flex gap-2 items-center flex-wrap">
+                                <select id="globalAiModel"
+                                    class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500">
+                                    <option value="gpt">🤖 GPT-4o Mini</option>
+                                    <option value="grok">🚀 Grok (xAI)</option>
+                                </select>
+                                <button onclick="generateTitleFromContent()" type="button"
+                                    class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg text-sm font-medium hover:scale-105 transition flex items-center gap-2"
+                                    title="Generate title from article content">
+                                    <i class="fas fa-lightbulb"></i> Generate from Content
+                                </button>
+                                <button onclick="translateTitles()" type="button"
+                                    class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-sm font-medium hover:scale-105 transition flex items-center gap-2"
+                                    title="Translate existing title to other languages">
+                                    <i class="fas fa-magic"></i> AI Translate
+                                </button>
+                            </div>
                         </h3>
                         <div class="space-y-4">
                             <div>
@@ -133,10 +150,9 @@
                                 <i class="fas fa-file-alt text-emerald-400"></i> Content
                             </h3>
                             <div class="flex gap-2 bg-white/5 p-1 rounded-lg">
-                                <button onclick="autoTranslate()"
-                                    class="px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium transition flex items-center gap-2"
-                                    title="Translate from current tab to others">
-                                    <i class="fas fa-language"></i> Auto Translate
+                                <button onclick="autoTranslateContent()" type="button"
+                                    class="px-3 py-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                                    <i class="fas fa-language"></i> Auto Translate & Fix Format
                                 </button>
                                 <div class="w-px bg-white/10 mx-1"></div>
                                 <button onclick="switchLang('bn')"
@@ -247,13 +263,25 @@
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
-            <div class="flex justify-between mt-2 text-xs text-gray-500">
-                <select id="aiModel" class="bg-transparent border-none focus:ring-0 cursor-pointer hover:text-gray-300">
-                    <option value="gemini">⚡ Gemini Pro</option>
-                    <option value="gpt">🤖 GPT-4o</option>
-                    <option value="deepseek">🧠 DeepSeek</option>
+            <div class="flex flex-col mt-2 gap-2">
+                <div class="flex justify-between text-xs text-gray-500">
+                    <select id="aiModel" onchange="toggleModelSelector()"
+                        class="bg-transparent border-none focus:ring-0 cursor-pointer hover:text-gray-300 max-w-[150px]">
+                        <option value="ollama">🖥️ Ollama (Local)</option>
+                        <option value="gpt">🤖 GPT-4o Mini</option>
+                        <option value="groq">⚡ Groq</option>
+                        <option value="gemini">🔮 Gemini Pro</option>
+                    </select>
+                    <button onclick="clearChat()" class="hover:text-red-400">Clear Chat</button>
+                </div>
+
+                <!-- Ollama Model Selector -->
+                <select id="ollamaModelSelector" onchange="saveOllamaModel()"
+                    class="text-xs bg-white/5 border border-white/10 rounded px-2 py-1 text-gray-300 focus:border-emerald-500 focus:outline-none hidden">
+                    <option value="phi3:mini">🔬 Phi-3 Mini (3.8B) - Best</option>
+                    <option value="gemma2:2b">💎 Gemma 2 (2B) - Fast</option>
+                    <option value="mistral">🌪️ Mistral (7B) - Balanced</option>
                 </select>
-                <button onclick="clearChat()" class="hover:text-red-400">Clear Chat</button>
             </div>
         </div>
     </div>
@@ -282,33 +310,39 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">OpenAI API Key</label>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">OpenAI API Keys (3 Keys
+                        Configured)</label>
                     <div class="flex gap-2">
-                        <input type="password" id="openaiKey"
-                            class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                        <input type="password" id="openaiKey" readonly
+                            class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none"
+                            placeholder="3 keys configured automatically">
                         <button onclick="testApi('openai')"
                             class="bg-white/5 hover:bg-white/10 text-emerald-400 px-3 rounded-lg text-sm border border-white/10">Test</button>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1">✅ Using 3 OpenAI keys with automatic rotation</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">DeepSeek API Key</label>
+                    <label class="block text-sm font-medium text-gray-400 mb-1">Groq API Key (Ultra Fast!)</label>
                     <div class="flex gap-2">
-                        <input type="password" id="deepseekKey"
+                        <input type="password" id="groqKey"
                             class="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none">
-                        <button onclick="testApi('deepseek')"
+                        <button onclick="testApi('groq')"
                             class="bg-white/5 hover:bg-white/10 text-emerald-400 px-3 rounded-lg text-sm border border-white/10">Test</button>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1">⚡ Free & Fast - Get key from console.groq.com</p>
                 </div>
-            </div>
-
-            <div class="mt-8 flex justify-end gap-3">
-                <button onclick="closeSettings()"
-                    class="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/5 transition">Cancel</button>
-                <button onclick="saveSettings()"
-                    class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition shadow-lg shadow-emerald-500/20">Save
-                    Settings</button>
+                <p class="text-xs text-gray-500 mt-1">⚡ Free & Fast - Get key from console.groq.com</p>
             </div>
         </div>
+
+        <div class="mt-8 flex justify-end gap-3">
+            <button onclick="closeSettings()"
+                class="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/5 transition">Cancel</button>
+            <button onclick="saveSettings()"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium transition shadow-lg shadow-emerald-500/20">Save
+                Settings</button>
+        </div>
+    </div>
     </div>
 
     <!-- Hidden Fields -->
@@ -419,19 +453,98 @@
             const { value: formValues } = await Swal.fire({
                 title: 'New Category',
                 html: `
-                    <input id="catId" class="swal2-input" placeholder="ID (e.g. aqeedah)">
-                    <input id="catBn" class="swal2-input" placeholder="Bangla Name">
-                    <input id="catEn" class="swal2-input" placeholder="English Name">
-                    <input id="catAr" class="swal2-input" placeholder="Arabic Name">
+                    <div style="margin-bottom: 15px; text-align: left; color: #666; font-size: 13px;">
+                        💡 Enter name in any language, AI will translate to all 3 languages & generate ID
+                    </div>
+                    <input id="catBn" class="swal2-input" placeholder="বাংলা নাম (Optional)">
+                    <input id="catEn" class="swal2-input" placeholder="English Name (Optional)">
+                    <input id="catAr" class="swal2-input" placeholder="اسم عربي (Optional)">
+                    <div style="text-align: center; margin: 15px 0;">
+                        <button onclick="smartTranslate()" type="button" 
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;">
+                            <i class="fas fa-magic"></i> AI Translate & Generate ID
+                        </button>
+                    </div>
+                    <input id="catId" class="swal2-input" placeholder="ID (Auto-generated)" readonly style="background: #f0f0f0;">
                 `,
                 focusConfirm: false,
                 showCancelButton: true,
+                width: '500px',
+                didOpen: () => {
+                    window.smartTranslate = async () => {
+                        const bn = document.getElementById('catBn').value.trim();
+                        const en = document.getElementById('catEn').value.trim();
+                        const ar = document.getElementById('catAr').value.trim();
+
+                        // Find which field has input
+                        let sourceLang = '';
+                        let sourceText = '';
+                        if (bn) { sourceLang = 'Bangla'; sourceText = bn; }
+                        else if (en) { sourceLang = 'English'; sourceText = en; }
+                        else if (ar) { sourceLang = 'Arabic'; sourceText = ar; }
+                        else {
+                            Swal.showValidationMessage('Please enter a name in at least one language');
+                            return;
+                        }
+
+                        Swal.showLoading();
+                        try {
+                            const keys = JSON.parse(localStorage.getItem('openaiKeys') || '[]');
+                            if (!keys || keys.length === 0) {
+                                throw new Error('OpenAI API key not found. Please add it in Settings.');
+                            }
+
+                            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${keys[0]}`
+                                },
+                                body: JSON.stringify({
+                                    model: "gpt-4o-mini",
+                                    messages: [{
+                                        role: "user",
+                                        content: `The word "${sourceText}" is in ${sourceLang}. Translate it to the other 2 languages (Bangla, English, Arabic) and also create a URL-friendly ID (lowercase, no spaces, use hyphens). Return ONLY a JSON object: {"bn": "বাংলা", "en": "English", "ar": "عربي", "id": "url-friendly-id"}. No explanation.`
+                                    }],
+                                    response_format: { type: "json_object" }
+                                })
+                            });
+
+                            if (!res.ok) throw new Error('Translation failed');
+
+                            const data = await res.json();
+                            const result = JSON.parse(data.choices[0].message.content);
+
+                            document.getElementById('catBn').value = result.bn;
+                            document.getElementById('catEn').value = result.en;
+                            document.getElementById('catAr').value = result.ar;
+                            document.getElementById('catId').value = result.id;
+
+                            Swal.hideLoading();
+                            Swal.showValidationMessage('✅ Translated & ID generated successfully!');
+                            setTimeout(() => Swal.resetValidationMessage(), 2000);
+                        } catch (error) {
+                            Swal.hideLoading();
+                            Swal.showValidationMessage('❌ ' + error.message);
+                        }
+                    };
+                },
                 preConfirm: () => {
+                    const id = document.getElementById('catId').value;
+                    const bn = document.getElementById('catBn').value;
+                    const en = document.getElementById('catEn').value;
+                    const ar = document.getElementById('catAr').value;
+
+                    if (!id || !en) {
+                        Swal.showValidationMessage('Please use AI Translate button first');
+                        return false;
+                    }
+
                     return {
-                        id: document.getElementById('catId').value,
-                        titleBn: document.getElementById('catBn').value,
-                        titleEn: document.getElementById('catEn').value,
-                        titleAr: document.getElementById('catAr').value
+                        id: id,
+                        titleBn: bn,
+                        titleEn: en,
+                        titleAr: ar
                     };
                 }
             });
@@ -555,6 +668,116 @@
             showEditorView();
         }
 
+        async function translateTitles() {
+            const bn = document.getElementById('titleBn').value.trim();
+            const en = document.getElementById('titleEn').value.trim();
+            const ar = document.getElementById('titleAr').value.trim();
+
+            // Find which field has input
+            let sourceLang = '';
+            let sourceText = '';
+            if (bn) { sourceLang = 'Bangla'; sourceText = bn; }
+            else if (en) { sourceLang = 'English'; sourceText = en; }
+            else if (ar) { sourceLang = 'Arabic'; sourceText = ar; }
+            else {
+                Swal.fire('Info', 'Please enter a title in at least one language first', 'info');
+                return;
+            }
+
+            Swal.fire({ title: 'Translating...', didOpen: () => Swal.showLoading() });
+
+            try {
+                const result = JSON.parse(await callAI(
+                    `The title "${sourceText}" is in ${sourceLang}. Translate it to the other 2 languages (Bangla, English, Arabic). Return ONLY a JSON object: {"bn": "বাংলা", "en": "English", "ar": "عربي"}. No explanation.`
+                ));
+
+                document.getElementById('titleBn').value = result.bn;
+                document.getElementById('titleEn').value = result.en;
+                document.getElementById('titleAr').value = result.ar;
+
+                Swal.fire('Success!', 'Titles translated successfully!', 'success');
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        }
+
+        async function generateTitleFromContent() {
+            // Get content from all three languages
+            const contentBn = document.getElementById('contentBn').value.trim();
+            const contentEn = document.getElementById('contentEn').value.trim();
+            const contentAr = document.getElementById('contentAr').value.trim();
+
+            // Find which content field has the most text
+            let sourceContent = '';
+            let sourceLang = '';
+
+            if (contentBn.length > contentEn.length && contentBn.length > contentAr.length) {
+                sourceContent = contentBn;
+                sourceLang = 'Bangla';
+            } else if (contentEn.length > contentBn.length && contentEn.length > contentAr.length) {
+                sourceContent = contentEn;
+                sourceLang = 'English';
+            } else if (contentAr.length > 0) {
+                sourceContent = contentAr;
+                sourceLang = 'Arabic';
+            } else {
+                Swal.fire('Info', 'Please write some article content first', 'info');
+                return;
+            }
+
+            // Limit content to first 500 characters for analysis
+            const contentPreview = sourceContent.substring(0, 500);
+
+            Swal.fire({
+                title: 'Generating Title...',
+                text: 'AI is analyzing your content to create a catchy title',
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const keys = JSON.parse(localStorage.getItem('openaiKeys') || '[]');
+                if (!keys || keys.length === 0) {
+                    throw new Error('OpenAI API key not found. Please add it in Settings.');
+                }
+
+                const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${keys[0]}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini",
+                        messages: [{
+                            role: "user",
+                            content: `Based on this ${sourceLang} article content: "${contentPreview}..."
+
+Create a catchy, engaging, and SEO-friendly title that captures the essence of the article. The title should be:
+- Clear and descriptive
+- Attention-grabbing
+- Not too long (max 60 characters)
+
+Return titles in all 3 languages as JSON: {"bn": "বাংলা শিরোনাম", "en": "English Title", "ar": "عنوان عربي"}. No explanation.`
+                        }],
+                        response_format: { type: "json_object" }
+                    })
+                });
+
+                if (!res.ok) throw new Error('Title generation failed');
+
+                const data = await res.json();
+                const result = JSON.parse(data.choices[0].message.content);
+
+                document.getElementById('titleBn').value = result.bn;
+                document.getElementById('titleEn').value = result.en;
+                document.getElementById('titleAr').value = result.ar;
+
+                Swal.fire('Success!', 'Catchy titles generated from your content!', 'success');
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        }
+
         async function saveArticle() {
             const categoryId = document.getElementById('currentCategoryId').value;
             const articleId = document.getElementById('currentArticleId').value || `${categoryId}-${Date.now()}`;
@@ -649,66 +872,475 @@
             document.getElementById(`content${lang.charAt(0).toUpperCase() + lang.slice(1)}`).classList.remove('hidden');
         }
 
-        // Translation
-        async function autoTranslate() {
-            // Determine active language
-            let sourceLang = 'bn';
-            document.querySelectorAll('.lang-tab').forEach(tab => {
-                if (tab.classList.contains('active')) sourceLang = tab.dataset.lang;
-            });
+        // ===== AI AGENT FUNCTIONS =====
+        // Available tools for AI Agent (OpenAI tools format)
+        const AGENT_TOOLS = [
+            {
+                type: "function",
+                function: {
+                    name: "create_category",
+                    description: "Create a new category in the system",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            id: { type: "string", description: "Category ID (lowercase, no spaces, e.g., 'ramadan')" },
+                            nameBn: { type: "string", description: "Category name in Bangla" },
+                            nameEn: { type: "string", description: "Category name in English" },
+                            nameAr: { type: "string", description: "Category name in Arabic" }
+                        },
+                        required: ["id", "nameBn", "nameEn", "nameAr"]
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "create_article",
+                    description: "Create a new article in a specific category",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            categoryId: { type: "string", description: "Category ID where article belongs" },
+                            titleBn: { type: "string", description: "Article title in Bangla" },
+                            titleEn: { type: "string", description: "Article title in English" },
+                            titleAr: { type: "string", description: "Article title in Arabic" },
+                            contentBn: { type: "string", description: "Article content in Bangla (markdown supported)" },
+                            contentEn: { type: "string", description: "Article content in English (markdown supported)" },
+                            contentAr: { type: "string", description: "Article content in Arabic (markdown supported)" }
+                        },
+                        required: ["categoryId", "titleBn", "titleEn", "titleAr", "contentBn", "contentEn", "contentAr"]
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "list_categories",
+                    description: "Get list of all categories",
+                    parameters: {
+                        type: "object",
+                        properties: {}
+                    }
+                }
+            },
+            {
+                type: "function",
+                function: {
+                    name: "delete_category",
+                    description: "Delete a category by ID",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            id: { type: "string", description: "Category ID to delete" }
+                        },
+                        required: ["id"]
+                    }
+                }
+            }
+        ];
 
-            const titleId = `title${sourceLang.charAt(0).toUpperCase() + sourceLang.slice(1)}`;
-            const contentId = `content${sourceLang.charAt(0).toUpperCase() + sourceLang.slice(1)}`;
+        // Execute agent function
+        async function executeAgentFunction(functionName, args) {
+            if (functionName === 'create_category') {
+                const res = await fetch('/api/categories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(args)
+                });
+                if (res.ok) {
+                    loadCategories(); // Refresh UI
+                    return { success: true, message: `Category "${args.nameEn}" created successfully!` };
+                }
+                return { success: false, message: 'Failed to create category' };
+            }
 
-            const sourceTitle = document.getElementById(titleId).value;
-            const sourceContent = document.getElementById(contentId).value;
+            else if (functionName === 'create_article') {
+                const article = {
+                    id: Date.now().toString(),
+                    categoryId: args.categoryId,
+                    title: { bn: args.titleBn, en: args.titleEn, ar: args.titleAr },
+                    content: { bn: args.contentBn, en: args.contentEn, ar: args.contentAr },
+                    date: new Date().toISOString()
+                };
 
-            if (!sourceTitle && !sourceContent) {
-                return Swal.fire('Warning', 'Please write something first!', 'warning');
+                const res = await fetch('/api/articles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(article)
+                });
+                if (res.ok) {
+                    loadArticles(); // Refresh UI
+                    return { success: true, message: `Article "${args.titleEn}" created successfully!` };
+                }
+                return { success: false, message: 'Failed to create article' };
+            }
+
+            else if (functionName === 'list_categories') {
+                const res = await fetch('/api/categories');
+                const categories = await res.json();
+                return { categories: categories.map(c => `${c.id}: ${c.name.en}`) };
+            }
+
+            else if (functionName === 'delete_category') {
+                const res = await fetch(`/api/categories/${args.id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadCategories(); // Refresh UI
+                    return { success: true, message: `Category deleted successfully!` };
+                }
+                return { success: false, message: 'Failed to delete category' };
+            }
+
+            // AI Helper Function (supports GPT and Groq)
+            async function callAI(prompt, systemPrompt = '') {
+                const model = document.getElementById('globalAiModel').value;
+
+                try {
+                    if (model === 'gpt') {
+                        const keys = JSON.parse(localStorage.getItem('openaiKeys') || '[]');
+                        if (!keys || keys.length === 0) {
+                            throw new Error('OpenAI API key not found. Please add it in Settings.');
+                        }
+
+                        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${keys[0]}`
+                            },
+                            body: JSON.stringify({
+                                model: "gpt-4o-mini",
+                                messages: systemPrompt ? [
+                                    { role: "system", content: systemPrompt },
+                                    { role: "user", content: prompt }
+                                ] : [{ role: "user", content: prompt }],
+                                response_format: { type: "json_object" }
+                            })
+                        });
+
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error?.message || `GPT Error: ${res.status}`);
+                        }
+
+                        const data = await res.json();
+                        return data.choices[0].message.content;
+                    } else if (model === 'grok') {
+                        const key = localStorage.getItem('grokKey');
+                        if (!key) {
+                            throw new Error('Grok API key not found. Please add it in Settings.');
+                        }
+
+                        const res = await fetch('https://api.x.ai/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${key}`
+                            },
+                            body: JSON.stringify({
+                                model: "grok-beta",
+                                messages: systemPrompt ? [
+                                    { role: "system", content: systemPrompt },
+                                    { role: "user", content: prompt }
+                                ] : [{ role: "user", content: prompt }],
+                                stream: false
+                            })
+                        });
+
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error?.message || `Grok Error: ${res.status}`);
+                        }
+
+                        const data = await res.json();
+                        return data.choices[0].message.content;
+                    }
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            return { error: 'Unknown function' };
+        }
+
+        // Auto Translate & Format Fixer
+        async function autoTranslateContent() {
+            const contentBn = document.getElementById('contentBn').value.trim();
+            const contentEn = document.getElementById('contentEn').value.trim();
+            const contentAr = document.getElementById('contentAr').value.trim();
+
+            // Find which content has text
+            let sourceContent = '';
+            let sourceLang = '';
+            let targetLangs = [];
+
+            if (contentBn && !contentEn && !contentAr) {
+                sourceContent = contentBn;
+                sourceLang = 'Bangla';
+                targetLangs = ['English', 'Arabic'];
+            } else if (contentEn && !contentBn && !contentAr) {
+                sourceContent = contentEn;
+                sourceLang = 'English';
+                targetLangs = ['Bangla', 'Arabic'];
+            } else if (contentAr && !contentBn && !contentEn) {
+                sourceContent = contentAr;
+                sourceLang = 'Arabic';
+                targetLangs = ['Bangla', 'English'];
+            } else if (!contentBn && !contentEn && !contentAr) {
+                Swal.fire('Info', 'Please write content in at least one language first', 'info');
+                return;
+            } else {
+                Swal.fire('Info', 'Please fill only ONE language content. The AI will translate to the other 2 languages.', 'info');
+                return;
             }
 
             Swal.fire({
-                title: 'Translating...',
-                text: 'Please wait while we translate your content.',
-                allowOutsideClick: false,
+                title: 'Translating & Fixing Format...',
+                text: `Translating from ${sourceLang} to ${targetLangs.join(' & ')}`,
                 didOpen: () => Swal.showLoading()
             });
 
-            const targets = ['bn', 'en', 'ar'].filter(l => l !== sourceLang);
-
             try {
-                for (const target of targets) {
-                    const targetTitleId = `title${target.charAt(0).toUpperCase() + target.slice(1)}`;
-                    const targetContentId = `content${target.charAt(0).toUpperCase() + target.slice(1)}`;
+                const result = JSON.parse(await callAI(
+                    `Translate this ${sourceLang} article content to ${targetLangs.join(' and ')}. Also fix formatting:
+- Remove all bold markdown (** or __)
+- Use single asterisk (*) for italic if needed
+- Keep proper line breaks and paragraphs
+- Maintain natural flow
 
-                    // Translate Title
-                    if (sourceTitle) {
-                        const res = await fetch('/api/translate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ text: sourceTitle, target })
-                        });
-                        const data = await res.json();
-                        if (data.translated) document.getElementById(targetTitleId).value = data.translated;
-                    }
+Content:
+${sourceContent}
 
-                    // Translate Content
-                    if (sourceContent) {
-                        const res = await fetch('/api/translate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ text: sourceContent, target })
-                        });
-                        const data = await res.json();
-                        if (data.translated) document.getElementById(targetContentId).value = data.translated;
-                    }
-                }
-                Swal.fire('Success', 'Translation complete!', 'success');
-            } catch (e) {
-                console.error(e);
-                Swal.fire('Error', 'Translation failed', 'error');
+Return JSON: {"bn": "বাংলা content", "en": "English content", "ar": "عربي content"}. No explanation.`
+                ));
+
+                // Fill the content fields
+                document.getElementById('contentBn').value = result.bn;
+                document.getElementById('contentEn').value = result.en;
+                document.getElementById('contentAr').value = result.ar;
+
+                Swal.fire('Success!', 'Content translated and formatted successfully!', 'success');
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
             }
         }
+
+        async function generateArticle() {
+            const prompt = document.getElementById('writerPrompt').value;
+            const model = document.getElementById('writerModel').value;
+
+            if (!prompt) {
+                Swal.fire('Error', 'Please enter a topic or prompt', 'error');
+                return;
+            }
+
+            // Close popup and show terminal
+            toggleAiWriter();
+            const terminal = document.getElementById('liveTerminal');
+            const terminalContent = document.getElementById('terminalContent');
+            terminal.classList.remove('hidden');
+            terminalContent.innerHTML = '<span class="opacity-50">// Initializing AI connection...</span>\n';
+
+            try {
+                // Get current category context (Safe Mode)
+                let categoryName = 'General';
+                try {
+                    const categorySelect = document.getElementById('categorySelect');
+                    if (categorySelect && categorySelect.selectedIndex >= 0) {
+                        categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+                    }
+                } catch (err) { console.warn('Category context missing, using General'); }
+
+                const systemPrompt = `You are an expert Islamic article writer. 
+                
+                CONTEXT:
+                - The user is currently in the "${categoryName}" category.
+                - Ensure the article is relevant to this category.
+
+                FORMATTING RULES:
+                - Do NOT use bold markdown (double asterisks like **text**).
+                - Use single asterisks for italic if needed, or plain text.
+                - Keep the tone respectful and informative.
+
+                OUTPUT FORMAT:
+                You MUST return the result in valid JSON format with the following fields:
+                {
+                    "titleBn": "Title in Bangla",
+                    "titleEn": "Title in English",
+                    "titleAr": "Title in Arabic",
+                    "contentBn": "Content in Bangla (Markdown, NO BOLD)",
+                    "contentEn": "Content in English (Markdown, NO BOLD)",
+                    "contentAr": "Content in Arabic (Markdown, NO BOLD)"
+                }`;
+
+                let fullText = '';
+
+                if (model === 'ollama') {
+                    const ollamaModel = document.getElementById('writerOllamaModel').value;
+                    console.log(`[AI] Connecting to Ollama: ${ollamaModel}`);
+                    terminalContent.innerHTML += `<span class="opacity-50">// Connecting to Ollama (${ollamaModel})...</span>\n\n`;
+
+                    const response = await fetch('/api/ai/ollama', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: ollamaModel,
+                            messages: [
+                                { role: "system", content: systemPrompt },
+                                { role: "user", content: prompt }
+                            ],
+                            stream: true,
+                            options: {
+                                num_ctx: 4096,
+                                temperature: 0.7,
+                                num_predict: 2000
+                            }
+                        })
+                    });
+
+                    console.log('[AI] Response status:', response.status);
+                    if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        // Parse Ollama stream format
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (!line) continue;
+                            try {
+                                const json = JSON.parse(line);
+                                if (json.message?.content) {
+                                    const content = json.message.content;
+                                    fullText += content;
+                                    terminalContent.textContent = fullText; // Live update
+                                    terminalContent.scrollTop = terminalContent.scrollHeight;
+                                }
+                            } catch (e) { }
+                        }
+                    }
+                }
+                else {
+                    // For GPT/Groq (Non-streaming for now to keep it simple, or simulate typing)
+                    terminalContent.innerHTML += `<span class="opacity-50">// Connecting to Cloud AI...</span>\n\n`;
+
+                    let res;
+                    try {
+                        if (model === 'gpt') {
+                            const keys = JSON.parse(localStorage.getItem('openaiKeys') || '[]');
+                            if (!keys || keys.length === 0) {
+                                throw new Error('OpenAI API key not found. Please add it in Settings.');
+                            }
+                            console.log('[AI] Using GPT-4o-mini...');
+
+                            const controller = new AbortController();
+                            const timeout = setTimeout(() => controller.abort(), 60000); // 60s timeout (increased)
+
+                            res = await fetch('https://api.openai.com/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${keys[0]}`
+                                },
+                                body: JSON.stringify({
+                                    model: "gpt-4o-mini",
+                                    messages: [
+                                        { role: "system", content: systemPrompt },
+                                        { role: "user", content: prompt }
+                                    ],
+                                    response_format: { type: "json_object" }
+                                }),
+                                signal: controller.signal
+                            });
+                            clearTimeout(timeout);
+                        } else {
+                            const key = localStorage.getItem('groqKey');
+                            if (!key) {
+                                throw new Error('Groq API key not found. Please add it in Settings.');
+                            }
+                            console.log('[AI] Using Groq Llama 3.3...');
+
+                            const controller = new AbortController();
+                            const timeout = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+                            res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${key}`
+                                },
+                                body: JSON.stringify({
+                                    model: "llama-3.3-70b-versatile",
+                                    messages: [
+                                        { role: "system", content: systemPrompt + " Respond ONLY with JSON." },
+                                        { role: "user", content: prompt }
+                                    ],
+                                    response_format: { type: "json_object" }
+                                }),
+                                signal: controller.signal
+                            });
+                            clearTimeout(timeout);
+                        }
+
+                        if (!res.ok) {
+                            const errorData = await res.json();
+                            throw new Error(errorData.error?.message || `API Error: ${res.status}`);
+                        }
+
+                        const data = await res.json();
+                        fullText = data.choices?.[0]?.message?.content || '';
+
+                        if (!fullText) {
+                            throw new Error('Empty response from AI');
+                        }
+
+                        // Simulate typing for non-streaming
+                        terminalContent.textContent = '';
+                        for (let i = 0; i < fullText.length; i += 5) {
+                            terminalContent.textContent = fullText.substring(0, i);
+                            terminalContent.scrollTop = terminalContent.scrollHeight;
+                            await new Promise(r => setTimeout(r, 1));
+                        }
+                        terminalContent.textContent = fullText;
+                    } catch (cloudError) {
+                        console.error('[AI] Cloud API Error:', cloudError);
+                        throw new Error(`Cloud AI failed: ${cloudError.message}`);
+                    }
+                }
+
+                // Parse JSON and fill form
+                try {
+                    terminalContent.innerHTML += '\n\n<span class="text-green-500">// Parsing JSON...</span>';
+                    await new Promise(r => setTimeout(r, 500)); // Small delay to see success
+
+                    const cleanJson = fullText.replace(/```json\n?|\n?```/g, '').trim();
+                    const articleData = JSON.parse(cleanJson);
+
+                    document.getElementById('titleBn').value = articleData.titleBn || '';
+                    document.getElementById('titleEn').value = articleData.titleEn || '';
+                    document.getElementById('titleAr').value = articleData.titleAr || '';
+                    document.getElementById('contentBn').value = articleData.contentBn || '';
+                    document.getElementById('contentEn').value = articleData.contentEn || '';
+                    document.getElementById('contentAr').value = articleData.contentAr || '';
+
+                    terminal.classList.add('hidden'); // Close terminal
+                    Swal.fire('Success!', 'Article generated successfully!', 'success');
+                } catch (e) {
+                    console.error('JSON Parse Error:', e);
+                    terminalContent.innerHTML += `\n\n<span class="text-red-500">// Error parsing JSON: ${e.message}</span>`;
+                    // Don't close terminal on error so user can see raw output
+                }
+
+            } catch (e) {
+                console.error('Generation Error:', e);
+                terminalContent.innerHTML += `\n\n<span class="text-red-500">// Error: ${e.message}</span>`;
+            }
+        }
+
 
         // --- AI & Settings ---
         function toggleAIWidget() {
@@ -727,16 +1359,11 @@
         }
 
         function openSettings() {
-            const defaultKey = 'AIzaSyB3eQDpG_GR115eXeBL4Rgvv9V20VcqZfE';
+            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
 
-            // Set default if empty
-            if (!localStorage.getItem('geminiKey')) {
-                localStorage.setItem('geminiKey', defaultKey);
-            }
-
-            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey');
-            document.getElementById('openaiKey').value = localStorage.getItem('openaiKey') || '';
-            document.getElementById('deepseekKey').value = localStorage.getItem('deepseekKey') || '';
+            document.getElementById('geminiKey').value = localStorage.getItem('geminiKey') || '';
+            document.getElementById('groqKey').value = localStorage.getItem('groqKey') || defaultGroqKey;
+            document.getElementById('openaiKey').value = localStorage.getItem('openaiKey') || defaultOpenAIKeys[0];
 
             const modal = document.getElementById('settingsModal');
             const content = document.getElementById('settingsModalContent');
@@ -757,36 +1384,114 @@
 
         function saveSettings() {
             localStorage.setItem('geminiKey', document.getElementById('geminiKey').value);
-            localStorage.setItem('openaiKey', document.getElementById('openaiKey').value);
-            localStorage.setItem('deepseekKey', document.getElementById('deepseekKey').value);
+            localStorage.setItem('groqKey', document.getElementById('groqKey').value);
             closeSettings();
-            Swal.fire('Saved', 'API Keys saved successfully', 'success');
+            Swal.fire('Saved', 'Settings saved successfully', 'success');
         }
 
         async function testApi(provider) {
-            const key = document.getElementById(`${provider}Key`).value;
-            if (!key) return Swal.fire('Error', 'Please enter an API key', 'error');
-
             Swal.fire({ title: 'Testing...', didOpen: () => Swal.showLoading() });
 
             try {
-                const res = await fetch('/api/ai/test', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ provider, key })
-                });
+                if (provider === 'openai') {
+                    const keysStr = localStorage.getItem('openaiKeys');
+                    const keys = keysStr ? JSON.parse(keysStr) : [];
 
-                const data = await res.json();
+                    if (keys.length === 0) {
+                        Swal.fire('Error', 'No OpenAI keys configured', 'error');
+                        return;
+                    }
 
-                if (res.ok && data.success) {
-                    Swal.fire('Success', 'API Key is valid!', 'success');
-                } else {
-                    Swal.fire('Error', data.error || 'Invalid API Key', 'error');
+                    let successCount = 0;
+                    for (const key of keys) {
+                        try {
+                            const res = await fetch('https://api.openai.com/v1/models', {
+                                headers: { 'Authorization': `Bearer ${key}` }
+                            });
+                            if (res.ok) successCount++;
+                        } catch (e) { }
+                    }
+
+                    if (successCount > 0) {
+                        Swal.fire('Success', `${successCount}/${keys.length} OpenAI keys are valid!`, 'success');
+                    } else {
+                        Swal.fire('Error', 'All OpenAI keys are invalid', 'error');
+                    }
+                } else if (provider === 'gemini') {
+                    const key = document.getElementById('geminiKey').value;
+                    if (!key) {
+                        Swal.fire('Error', 'Please enter a Gemini API key', 'error');
+                        return;
+                    }
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: "Hello" }] }] })
+                    });
+
+                    if (res.ok) {
+                        localStorage.setItem('geminiKey', key);
+                        Swal.fire('Success', 'Gemini API Key is valid!', 'success');
+                    } else {
+                        Swal.fire('Error', 'Invalid Gemini API Key', 'error');
+                    }
+                } else if (provider === 'groq') {
+                    const key = document.getElementById('groqKey').value;
+                    if (!key) {
+                        Swal.fire('Error', 'Please enter a Groq API key', 'error');
+                        return;
+                    }
+
+                    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${key}`
+                        },
+                        body: JSON.stringify({
+                            model: "llama-3.3-70b-versatile",
+                            messages: [{ role: "user", content: "Hello" }]
+                        })
+                    });
+
+                    if (res.ok) {
+                        localStorage.setItem('groqKey', key);
+                        Swal.fire('Success', 'Groq API Key is valid!', 'success');
+                    } else {
+                        Swal.fire('Error', 'Invalid Groq API Key', 'error');
+                    }
                 }
             } catch (e) {
                 Swal.fire('Error', e.message, 'error');
             }
         }
+
+        // Toggle Ollama model selector visibility
+        function toggleModelSelector() {
+            const model = document.getElementById('aiModel').value;
+            const selector = document.getElementById('ollamaModelSelector');
+            if (model === 'ollama') {
+                selector.classList.remove('hidden');
+            } else {
+                selector.classList.add('hidden');
+            }
+        }
+
+        // Save selected Ollama model
+        function saveOllamaModel() {
+            const model = document.getElementById('ollamaModelSelector').value;
+            localStorage.setItem('ollamaModel', model);
+        }
+
+        // Initialize UI state
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedModel = localStorage.getItem('ollamaModel');
+            if (savedModel) {
+                document.getElementById('ollamaModelSelector').value = savedModel;
+            }
+            toggleModelSelector();
+        });
 
         async function sendChat() {
             const input = document.getElementById('chatInput');
@@ -799,35 +1504,245 @@
 
             // Get Config
             const model = document.getElementById('aiModel').value;
-            let key = localStorage.getItem(`${model}Key`);
-
-            // Fallback for Gemini
-            if (model === 'gemini' && !key) {
-                key = 'AIzaSyB3eQDpG_GR115eXeBL4Rgvv9V20VcqZfE';
-                localStorage.setItem('geminiKey', key);
-            }
-
-            if (!key) {
-                addMessage('Please configure your API key in settings first.', 'ai');
-                return;
-            }
 
             // Show Typing
             const typingId = addMessage('<i class="fas fa-circle-notch fa-spin"></i> Thinking...', 'ai');
 
             try {
-                const res = await fetch('/api/ai/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ provider: model, key, message })
-                });
+                if (model === 'ollama') {
+                    // Ollama - Local AI (Free & Unlimited!)
+                    const ollamaModel = document.getElementById('ollamaModelSelector').value;
 
-                const data = await res.json();
+                    try {
+                        // Use server proxy to avoid CORS issues
+                        const res = await fetch('/api/ai/ollama', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                model: ollamaModel,
+                                messages: [
+                                    {
+                                        role: "system",
+                                        content: "You are an AI agent managing a Sunnahway article admin panel. You can create categories and articles. When user asks to create something, respond with a JSON object in this format: {\"action\": \"create_category\", \"data\": {\"id\": \"ramadan\", \"nameBn\": \"রমজান\", \"nameEn\": \"Ramadan\", \"nameAr\": \"رمضان\"}} or {\"action\": \"create_article\", \"data\": {...}}. Otherwise, respond normally."
+                                    },
+                                    { role: "user", content: message }
+                                ],
+                                stream: false
+                            })
+                        });
 
-                if (res.ok && data.response) {
-                    document.getElementById(typingId).innerHTML = marked.parse(data.response);
-                } else {
-                    document.getElementById(typingId).innerHTML = 'Error: ' + (data.error || 'Unknown error');
+                        const data = await res.json();
+                        const aiResponse = data.message?.content || '';
+
+                        // Check if AI wants to perform an action
+                        if (aiResponse.includes('"action"')) {
+                            try {
+                                const jsonMatch = aiResponse.match(/\{[^}]+\}/);
+                                if (jsonMatch) {
+                                    const actionData = JSON.parse(jsonMatch[0]);
+
+                                    document.getElementById(typingId).innerHTML =
+                                        `🔧 Executing: <strong>${actionData.action}</strong><br><pre class="text-xs mt-2 bg-black/30 p-2 rounded">${JSON.stringify(actionData.data, null, 2)}</pre>`;
+
+                                    // Execute the function
+                                    const result = await executeAgentFunction(actionData.action, actionData.data);
+
+                                    addMessage(`✅ ${result.message || 'Action completed!'}`, 'ai');
+                                }
+                            } catch (e) {
+                                document.getElementById(typingId).innerHTML = marked.parse(aiResponse);
+                            }
+                        } else {
+                            document.getElementById(typingId).innerHTML = marked.parse(aiResponse);
+                        }
+                    } catch (e) {
+                        document.getElementById(typingId).innerHTML = '❌ Ollama not running. Start it with: <code>ollama serve</code>';
+                    }
+                } else if (model === 'gpt') {
+                    // Get all OpenAI keys
+                    const keysStr = localStorage.getItem('openaiKeys');
+                    const keys = keysStr ? JSON.parse(keysStr) : [];
+
+                    if (keys.length === 0) {
+                        document.getElementById(typingId).innerHTML = '⚠️ No OpenAI API keys configured.';
+                        return;
+                    }
+
+                    // Try each key with function calling
+                    for (const key of keys) {
+                        try {
+                            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${key}`
+                                },
+                                body: JSON.stringify({
+                                    model: "gpt-4o-mini",
+                                    messages: [
+                                        {
+                                            role: "system",
+                                            content: "You are an AI agent managing a Sunnahway article admin panel. You can create categories, create articles, list data, and delete items. Always use the provided tools when user asks you to perform actions. Be helpful and confirm what you're doing."
+                                        },
+                                        { role: "user", content: message }
+                                    ],
+                                    tools: AGENT_TOOLS,
+                                    tool_choice: "auto"
+                                })
+                            });
+
+                            const data = await res.json();
+
+                            if (res.ok && data.choices?.[0]?.message) {
+                                const aiMessage = data.choices[0].message;
+
+                                // Check if AI wants to call a tool
+                                if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
+                                    const toolCall = aiMessage.tool_calls[0];
+                                    const functionName = toolCall.function.name;
+                                    const functionArgs = JSON.parse(toolCall.function.arguments);
+
+                                    // Show what AI is doing
+                                    document.getElementById(typingId).innerHTML =
+                                        `🔧 Executing: <strong>${functionName}</strong><br><pre class="text-xs mt-2 bg-black/30 p-2 rounded">${JSON.stringify(functionArgs, null, 2)}</pre>`;
+
+                                    // Execute the function
+                                    const result = await executeAgentFunction(functionName, functionArgs);
+
+                                    // Get final response from AI
+                                    const finalRes = await fetch('https://api.openai.com/v1/chat/completions', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': `Bearer ${key}`
+                                        },
+                                        body: JSON.stringify({
+                                            model: "gpt-4o-mini",
+                                            messages: [
+                                                { role: "system", content: "Summarize the action result in a friendly way." },
+                                                { role: "user", content: `I executed ${functionName} and got: ${JSON.stringify(result)}. Please confirm to the user.` }
+                                            ]
+                                        })
+                                    });
+
+                                    const finalData = await finalRes.json();
+                                    const finalMessage = finalData.choices?.[0]?.message?.content || 'Action completed!';
+
+                                    addMessage(marked.parse(finalMessage), 'ai');
+                                } else {
+                                    // Regular text response
+                                    document.getElementById(typingId).innerHTML = marked.parse(aiMessage.content);
+                                }
+
+                                break; // Success!
+                            } else if (data.error?.code === 'rate_limit_exceeded') {
+                                console.log('Rate limit hit, trying next key...');
+                                continue;
+                            }
+                        } catch (e) {
+                            console.error('Request failed:', e);
+                            continue;
+                        }
+                    }
+                } else if (model === 'groq') {
+                    // Groq with tool calling (ultra fast!)
+                    const key = localStorage.getItem('groqKey');
+                    if (!key) {
+                        document.getElementById(typingId).innerHTML = '⚠️ Please configure Groq API key in settings.';
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${key}`
+                            },
+                            body: JSON.stringify({
+                                model: "llama-3.3-70b-versatile",
+                                messages: [
+                                    {
+                                        role: "system",
+                                        content: "You are an AI agent managing a Sunnahway article admin panel. You can create categories, create articles, list data, and delete items. Always use the provided tools when user asks you to perform actions. Be helpful and confirm what you're doing."
+                                    },
+                                    { role: "user", content: message }
+                                ],
+                                tools: AGENT_TOOLS,
+                                tool_choice: "auto"
+                            })
+                        });
+
+                        const data = await res.json();
+
+                        if (res.ok && data.choices?.[0]?.message) {
+                            const aiMessage = data.choices[0].message;
+
+                            // Check if AI wants to call a tool
+                            if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
+                                const toolCall = aiMessage.tool_calls[0];
+                                const functionName = toolCall.function.name;
+                                const functionArgs = JSON.parse(toolCall.function.arguments);
+
+                                // Show what AI is doing
+                                document.getElementById(typingId).innerHTML =
+                                    `🔧 Executing: <strong>${functionName}</strong><br><pre class="text-xs mt-2 bg-black/30 p-2 rounded">${JSON.stringify(functionArgs, null, 2)}</pre>`;
+
+                                // Execute the function
+                                const result = await executeAgentFunction(functionName, functionArgs);
+
+                                // Get final response
+                                const finalRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${key}`
+                                    },
+                                    body: JSON.stringify({
+                                        model: "llama-3.3-70b-versatile",
+                                        messages: [
+                                            { role: "system", content: "Summarize the action result in a friendly way." },
+                                            { role: "user", content: `I executed ${functionName} and got: ${JSON.stringify(result)}. Please confirm to the user.` }
+                                        ]
+                                    })
+                                });
+
+                                const finalData = await finalRes.json();
+                                const finalMessage = finalData.choices?.[0]?.message?.content || 'Action completed!';
+
+                                addMessage(marked.parse(finalMessage), 'ai');
+                            } else {
+                                // Regular text response
+                                document.getElementById(typingId).innerHTML = marked.parse(aiMessage.content);
+                            }
+                        }
+                    } catch (e) {
+                        document.getElementById(typingId).innerHTML = '❌ Error: ' + e.message;
+                    }
+                } else if (model === 'gemini') {
+                    // Regular Gemini chat (no function calling)
+                    const key = localStorage.getItem('geminiKey');
+                    if (!key) {
+                        document.getElementById(typingId).innerHTML = '⚠️ Please configure Gemini API key in settings.';
+                        return;
+                    }
+
+                    const models = ['gemini-1.5-flash', 'gemini-1.5-pro'];
+                    for (const modelName of models) {
+                        try {
+                            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                                document.getElementById(typingId).innerHTML = marked.parse(data.candidates[0].content.parts[0].text);
+                                break;
+                            }
+                        } catch (e) { console.error(e); }
+                        // If all models fail, responseText will remain empty
+                    }
                 }
             } catch (e) {
                 document.getElementById(typingId).innerHTML = 'Error: ' + e.message;
@@ -907,6 +1822,27 @@
             `).join('');
         });
     </script>
+    <!-- Live AI Terminal Overlay -->
+    <div id="liveTerminal"
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div
+            class="w-full max-w-4xl bg-[#0d1117] border border-gray-700 rounded-lg shadow-2xl overflow-hidden flex flex-col h-[80vh]">
+            <!-- Terminal Header -->
+            <div class="bg-[#161b22] px-4 py-3 border-b border-gray-700 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="ml-3 text-xs text-gray-400 font-mono">ai_agent_stream.exe</span>
+                </div>
+                <span class="text-xs text-emerald-500 font-mono animate-pulse">● Live Generating...</span>
+            </div>
+            <!-- Terminal Content -->
+            <div class="flex-1 p-6 overflow-y-auto font-mono text-sm text-emerald-400/90 leading-relaxed whitespace-pre-wrap"
+                id="terminalContent"></div>
+        </div>
+    </div>
+
 </body>
 
 </html>
